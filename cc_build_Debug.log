@@ -1,0 +1,20 @@
+-----------------------  VMD642_video_out0.pjt - Debug  -----------------------
+[_sa7121h.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "_sa7121h.c"
+
+[_tvp51xx.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "_tvp51xx.c"
+
+[dm642main.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "dm642main.c"
+
+[iic.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "iic.c"
+
+[ves_dm642.asm] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "ves_dm642.asm"
+
+[vportcap.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "vportcap.c"
+
+[vportdis.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "vportdis.c"
+
+[Linking...] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -@"Debug.lkf"
+<Linking>
+
+Build Complete,
+  0 Errors, 0 Warnings, 0 Remarks.

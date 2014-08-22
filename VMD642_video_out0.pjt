@@ -1,0 +1,43 @@
+; Code Composer Project File, Version 2.0 (do not modify or remove this line)
+
+[Project Settings]
+ProjectDir="C:\Documents and Settings\Administrator\My Documents\DM642_OUT_CH0\"
+ProjectType=Executable
+CPUFamily=TMS320C64XX
+Tool="Compiler"
+Tool="CustomBuilder"
+Tool="DspBiosBuilder"
+Tool="Linker"
+Config="Debug"
+Config="Release"
+
+[Source Files]
+Source="lib\cslDM642.lib"
+Source="lib\rts6400.lib"
+Source="src\_sa7121h.c"
+Source="src\_tvp51xx.c"
+Source="src\dm642main.c"
+Source="src\iic.c"
+Source="src\ves_dm642.asm"
+Source="src\vportcap.c"
+Source="src\vportdis.c"
+Source="VMD642_video_out.cmd"
+
+["Compiler" Settings: "Debug"]
+Options=-g -q -fr"C:\Documents and Settings\Administrator\My Documents\DM642_OUT_CH0\Debug" -i"C:\Documents and Settings\Administrator\My Documents\DM642_OUT_CH0\include" -d"_DEBUG" -d"CHIP_DM642" -mv6400
+
+["Compiler" Settings: "Release"]
+Options=-q -o3 -fr"C:\Documents and Settings\Administrator\My Documents\DM642_OUT_CH0\Release" -mv6400
+
+["DspBiosBuilder" Settings: "Debug"]
+Options=-v6x
+
+["DspBiosBuilder" Settings: "Release"]
+Options=-v6x
+
+["Linker" Settings: "Debug"]
+Options=-q -c -m".\Debug\VMD642_video_out1.map" -o".\Debug\VMD642_video_out1.out" -stack0x400 -w -x
+
+["Linker" Settings: "Release"]
+Options=-q -c -m".\Release\VMD642_video_out1.map" -o".\Release\VMD642_video_out1.out" -w -x
+
