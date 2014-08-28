@@ -104,10 +104,22 @@ Cb Óë Cr Í¨µÀ 720 * 294 */
 /*SDRAM µØÖ· 0x80000000 - 0x81FFFFFF*/
 /*×¢Òâ¸ø¶¨µÄµØÖ·ÓëcmdÎÄ¼þÖÐÃèÊöµÄµØÖ·Ò»ÖÂ*/
 
-/*µÚÒ»Ö¡Í¼ÏñÊ×µØÖ·£¬¿Õ¼äÒÑÔÚ vportcap.c ÖÐ·ÖÅä*/
+/*µ±Ç°Í¼ÏñÊ×µØÖ·£¬¿Õ¼äÒÑÔÚ vportcap.c ÖÐ·ÖÅä*/
 Uint32 capYbuffer  = 0x80000000;
 Uint32 capCbbuffer = 0x800675c0;
 Uint32 capCrbuffer = 0x8009b0a0;
+
+/*·ÖÅä¿Õ¼ä£¬¼ÇÂ¼µÚÒ»Ö¡Í¼ÏñÊ×µØÖ·*/
+#pragma DATA_SECTION(ChaAYSpace1, ".ChaAYSpace1") 
+Uint8 ChaAYSpace1[720*588]; 
+#pragma DATA_SECTION(ChaACbSpace1, ".ChaACbSpace1")
+Uint8 ChaACbSpace1[360*588]; 
+#pragma DATA_SECTION(ChaACrSpace1, ".ChaACrSpace1")
+Uint8 ChaACrSpace1[360*588];
+
+Uint32 Ybuffer1  = 0x80100000;
+Uint32 Cbbuffer1 = 0x801675c0;
+Uint32 Crbuffer1 = 0x8019b0a0;
 
 /*·ÖÅä¿Õ¼ä£¬¼ÇÂ¼µÚ¶þÖ¡Í¼ÏñÊ×µØÖ·*/
 #pragma DATA_SECTION(ChaAYSpace2, ".ChaAYSpace2") 
@@ -117,9 +129,9 @@ Uint8 ChaACbSpace2[360*588];
 #pragma DATA_SECTION(ChaACrSpace2, ".ChaACrSpace2")
 Uint8 ChaACrSpace2[360*588];
 
-Uint32 Ybuffer2  = 0x80100000;
-Uint32 Cbbuffer2 = 0x801675c0;
-Uint32 Crbuffer2 = 0x8019b0a0;
+Uint32 Ybuffer2  = 0x80200000;
+Uint32 Cbbuffer2 = 0x802675c0;
+Uint32 Crbuffer2 = 0x8029b0a0;
 
 /*·ÖÅä¿Õ¼ä£¬¼ÇÂ¼µÚÈýÖ¡Í¼ÏñÊ×µØÖ·*/
 #pragma DATA_SECTION(ChaAYSpace3, ".ChaAYSpace3") 
@@ -129,9 +141,9 @@ Uint8 ChaACbSpace3[360*588];
 #pragma DATA_SECTION(ChaACrSpace3, ".ChaACrSpace3")
 Uint8 ChaACrSpace3[360*588];
 
-Uint32 Ybuffer3  = 0x80200000;
-Uint32 Cbbuffer3 = 0x802675c0;
-Uint32 Crbuffer3 = 0x8029b0a0;
+Uint32 Ybuffer3  = 0x80300000;
+Uint32 Cbbuffer3 = 0x803675c0;
+Uint32 Crbuffer3 = 0x8039b0a0;
 
 /*·ÖÅä¿Õ¼ä£¬¼ÇÂ¼µÚÒ»¶þÖ¡²îÍ¼ÏñÊ×µØÖ·*/
 #pragma DATA_SECTION(ChaAYSpaceDiff12, ".ChaAYSpaceDiff12") 
@@ -141,9 +153,9 @@ Uint8 ChaACbSpaceDiff12[360*588];
 #pragma DATA_SECTION(ChaACrSpaceDiff12, ".ChaACrSpaceDiff12")
 Uint8 ChaACrSpaceDiff12[360*588];
 
-Uint32 YbufferDiff12  = 0x80300000;
-Uint32 CbbufferDiff12 = 0x803675c0;
-Uint32 CrbufferDiff12 = 0x8039b0a0;
+Uint32 YbufferDiff12  = 0x80400000;
+Uint32 CbbufferDiff12 = 0x804675c0;
+Uint32 CrbufferDiff12 = 0x8049b0a0;
 
 /*·ÖÅä¿Õ¼ä£¬¼ÇÂ¼µÚ¶þÈýÖ¡²îÍ¼ÏñÊ×µØÖ·*/
 #pragma DATA_SECTION(ChaAYSpaceDiff23, ".ChaAYSpaceDiff23") 
@@ -153,9 +165,9 @@ Uint8 ChaACbSpaceDiff23[360*588];
 #pragma DATA_SECTION(ChaACrSpaceDiff23, ".ChaACrSpaceDiff23")
 Uint8 ChaACrSpaceDiff23[360*588];
 
-Uint32 YbufferDiff23  = 0x80400000;
-Uint32 CbbufferDiff23 = 0x804675c0;
-Uint32 CrbufferDiff23 = 0x8049b0a0;
+Uint32 YbufferDiff23  = 0x80500000;
+Uint32 CbbufferDiff23 = 0x805675c0;
+Uint32 CrbufferDiff23 = 0x8059b0a0;
 
 /*ÏÔÊ¾Í¼ÏñÊ×µØÖ·£¬¿Õ¼äÒÑÔÚ vportdis.c ÖÐ·ÖÅä*/
 Uint32 disYbuffer  = 0x81000000;
@@ -176,6 +188,13 @@ void main()
 {
 	Uint8 addrI2C;
 	int i;
+
+	/*The next position to store a frame*/
+	Uint8 nextFrame;
+	/* Current Buf addr */
+	Uint32 YBuf;
+	Uint32 CbBuf;
+	Uint32 CrBuf;
 
 /*-------------------------------------------------------*/
 /* perform all initializations                           */
@@ -225,7 +244,7 @@ void main()
     _IIC_write(hVMD642I2C, addrI2C, 0x0D, output_format);
     _IIC_write(hVMD642I2C, addrI2C, 0x0F, pin_cfg);
     _IIC_write(hVMD642I2C, addrI2C, 0x1B, chro_ctrl_2);
-    /*»Ø¶Áµ±Ç°ÉãÏñÉè±¸µÄ¸ñÊ½*/
+    /*»ØÁµ±Ç°ÉãÏñÉè±¸µÄ¸ñÊ½*/
     _IIC_read(hVMD642I2C, addrI2C, 0x8c, &vFromat);
     vFromat = vFromat & 0xff;
 	switch (vFromat)
@@ -243,7 +262,7 @@ void main()
 			NTSCorPAL = 2;/*ÏµÍ³Îª²»Ö§³ÖµÄÄ£Ê½*/
 			break;
 	}
-	if(NTSCorPAL ==2)
+	if(NTSCorPAL == 2)
 	{
 		/*ÏµÍ³²»Ö§³ÖµÄÄ£Ê½£¬ÖØÐÂÅäÖÃ*/
 		for(;;)
@@ -299,29 +318,53 @@ void main()
 	/*Æô¶¯²É¼¯Ä£¿é*/
 	bt656_capture_start(vpHchannel1);
 
-	/*µÈ´ýµÚÒ»Ö¡Êý¾Ý²É¼¯Íê³É*/
-	while(capNewFrame == 0){}
-	/*½«Êý¾Ý´æÈëÏÔÊ¾»º³åÇø£¬²¢Çå²É¼¯Íê³ÉµÄ±êÖ¾*/
-	capNewFrame = 0;
-
-	for(i=0; i<numLines; i++)
+	/*µÚÒ»´ÎÔËÐÐ£¬²É¼¯ÈýÖ¡Êý¾Ý*/
+	for (nextFrame = 1; nextFrame <= 3; nextFrame++)
 	{
-		/*´«ËÍY»º³åÇø*/
-		DAT_copy((void *)(capYbuffer + i * numPixels), 
-	             (void *)(disYbuffer + i * numPixels),
-	             numPixels);
-	    /*´«ËÍCb»º³åÇø*/
-	    DAT_copy((void *)(capCbbuffer + i * (numPixels >> 1)), 
-	             (void *)(disCbbuffer + i * (numPixels >> 1)),
-	             numPixels>>1);
-		/*´«ËÍCr»º³åÇø*/
-	    DAT_copy((void *)(capCrbuffer + i * (numPixels >> 1)), 
-	             (void *)(disCrbuffer + i * (numPixels >> 1)),
-	             numPixels>>1);
+		/*µÈ´ýÒ»Ö¡Êý¾Ý²É¼¯Íê³É*/
+		while(capNewFrame == 0){}
+		/*½«Êý¾Ý´æÈëÏÔÊ¾»º³åÇø£¬²¢Çå²É¼¯Íê³ÉµÄ±êÖ¾*/
+		capNewFrame = 0;
+
+		switch (nextFrame)
+		{
+			case 1: 
+				YBuf = Ybuffer1;
+				CbBuf = Cbbuffer1;
+				CrBuf = Crbuffer1;
+				break;
+			case 2: 
+				YBuf = Ybuffer2;
+				CbBuf = Cbbuffer2;
+				CrBuf = Crbuffer2;
+				break;
+			case 3: 
+				YBuf = Ybuffer3;
+				CbBuf = Cbbuffer3;
+				CrBuf = Crbuffer3;
+				break;		
+		}
+		for(i=0; i<numLines; i++)
+		{
+			/*´«ËÍY»º³åÇø*/
+			DAT_copy((void *)(capYbuffer + i * numPixels), 
+		             (void *)(YBuf + i * numPixels),
+		             numPixels);
+		    /*´«ËÍCb»º³åÇø*/
+		    DAT_copy((void *)(capCbbuffer + i * (numPixels >> 1)), 
+		             (void *)(CbBuf + i * (numPixels >> 1)),
+		             numPixels>>1);
+			/*´«ËÍCr»º³åÇø*/
+		    DAT_copy((void *)(capCrbuffer + i * (numPixels >> 1)), 
+		             (void *)(CrBuf + i * (numPixels >> 1)),
+		             numPixels>>1);
+		}
 	}
+
+
 	/*Æô¶¯ÏÔÊ¾Ä£¿é*/
 	bt656_display_start(vpHchannel0);
-	/*½¨Á¢ÏÔÊ¾µÄÊµÊ±Ñ­»·*/
+	/*½¨Á¢ÊµÊ±¼ÆËãÑ­»·*/
 	for(;;)
 	{
 		/*µ±²É¼¯ÇøµÄÊý¾ÝÒÑ¾­²É¼¯ºÃ£¬¶øÏÔÊ¾»º³åÇøµÄÊý¾ÝÒÑ¿Õ*/

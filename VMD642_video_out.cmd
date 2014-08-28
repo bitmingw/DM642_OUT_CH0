@@ -10,10 +10,11 @@ MEMORY
 {
   L2  : o = 00000000h l = 00040000h /* internal SRAM, 256KB */
   VIN : o = 80000000h l = 00100000h /* external memory, 1MB  */
-  BUF2: o = 80100000h l = 00100000h /* external memory, 1MB  */
-  BUF3: o = 80200000h l = 00100000h /* external memory, 1MB  */
-  DF12: o = 80300000h l = 00100000h /* external memory, 1MB  */
-  DF23: o = 80400000h l = 00100000h /* external memroy, 1MB  */
+  BUF1: o = 80100000h l = 00100000h /* external memory, 1MB  */
+  BUF2: o = 80200000h l = 00100000h /* external memory, 1MB  */
+  BUF3: o = 80300000h l = 00100000h /* external memory, 1MB  */
+  DF12: o = 80400000h l = 00100000h /* external memory, 1MB  */
+  DF23: o = 80500000h l = 00100000h /* external memroy, 1MB  */
   VOUT: o = 81000000h l = 00f00000h /* external memory, 15MB */
 }
 
@@ -35,6 +36,9 @@ SECTIONS
     .capChaACbSpace >   VIN
     .capChaACrSpace >   VIN
 
+    .ChaAYSpace1 >      BUF1
+    .ChaACbSpace1 >     BUF1
+    .ChaACrSpace1 >     BUF1
     .ChaAYSpace2 >      BUF2
     .ChaACbSpace2 >     BUF2
     .ChaACrSpace2 >     BUF2
