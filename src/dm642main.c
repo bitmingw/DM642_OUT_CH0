@@ -1,9 +1,15 @@
 /********************************************************************/
+/* Output video of Three-frame difference method                    */
+/* Author: Ming Wen                                                 */
+/********************************************************************/
+
+/********************************************************************/
 /*  Copyright 2006 by Vision Magic Ltd.								*/
 /*  Restricted rights to use, duplicate or disclose this code are	*/
 /*  granted through contract.									    */
 /*  															    */
 /********************************************************************/
+
 #include <csl.h>
 #include <csl_emifa.h>
 #include <csl_i2c.h>
@@ -16,6 +22,8 @@
 #include "vportdis.h"
 #include "sa7121h.h"
 #include "TVP51xx.h"
+
+/********************************************************************/
 
 /*VMD642的emifa的设置结构*/
 EMIFA_Config VMDEMIFConfig ={
@@ -84,19 +92,75 @@ VP_Handle vpHchannel0;
 VP_Handle vpHchannel1;
 VP_Handle vpHchannel2;
 
+/********************************************************************/
+
 /*确定图像的参数*/
 int numPixels = 720;//每行720个像素
 int numLines  = 576;//每帧576行（PAL）
-/*采集与显示缓冲区的首址*/
+
+/*缓存大小的计算 Y通道 720 * 588
+Cb 与 Cr 通道 720 * 294 */
+
+/*SDRAM 地址 0x80000000 - 0x81FFFFFF*/
+/*注意给定的地址与cmd文件中描述的地址一致*/
+
+/*第一帧图像首地址，空间已在 vportcap.c 中分配*/
 Uint32 capYbuffer  = 0x80000000;
 Uint32 capCbbuffer = 0x800675c0;
 Uint32 capCrbuffer = 0x8009b0a0;
-//Uint32 capCbbuffer = 0x6190;  
-//Uint32 capCrbuffer = 0x6190;
 
-Uint32 disYbuffer  = 0x80100000;
-Uint32 disCbbuffer = 0x801675c0; 
-Uint32 disCrbuffer = 0x8019b0a0;
+/*分配空间，记录第二帧图像首地址*/
+#pragma DATA_SECTION(ChaAYSpace2, ".ChaAYSpace2") 
+Uint8 ChaAYSpace2[720*588]; 
+#pragma DATA_SECTION(ChaACbSpace2, ".ChaACbSpace2")
+Uint8 ChaACbSpace2[360*588]; 
+#pragma DATA_SECTION(ChaACrSpace2, ".ChaACrSpace2")
+Uint8 ChaACrSpace2[360*588];
+
+Uint32 Ybuffer2  = 0x80100000;
+Uint32 Cbbuffer2 = 0x801675c0;
+Uint32 Crbuffer2 = 0x8019b0a0;
+
+/*分配空间，记录第三帧图像首地址*/
+#pragma DATA_SECTION(ChaAYSpace3, ".ChaAYSpace3") 
+Uint8 ChaAYSpace3[720*588]; 
+#pragma DATA_SECTION(ChaACbSpace3, ".ChaACbSpace3")
+Uint8 ChaACbSpace3[360*588]; 
+#pragma DATA_SECTION(ChaACrSpace3, ".ChaACrSpace3")
+Uint8 ChaACrSpace3[360*588];
+
+Uint32 Ybuffer3  = 0x80200000;
+Uint32 Cbbuffer3 = 0x802675c0;
+Uint32 Crbuffer3 = 0x8029b0a0;
+
+/*分配空间，记录第一二帧差图像首地址*/
+#pragma DATA_SECTION(ChaAYSpaceDiff12, ".ChaAYSpaceDiff12") 
+Uint8 ChaAYSpaceDiff12[720*588]; 
+#pragma DATA_SECTION(ChaACbSpaceDiff12, ".ChaACbSpaceDiff12")
+Uint8 ChaACbSpaceDiff12[360*588]; 
+#pragma DATA_SECTION(ChaACrSpaceDiff12, ".ChaACrSpaceDiff12")
+Uint8 ChaACrSpaceDiff12[360*588];
+
+Uint32 YbufferDiff12  = 0x80300000;
+Uint32 CbbufferDiff12 = 0x803675c0;
+Uint32 CrbufferDiff12 = 0x8039b0a0;
+
+/*分配空间，记录第二三帧差图像首地址*/
+#pragma DATA_SECTION(ChaAYSpaceDiff23, ".ChaAYSpaceDiff23") 
+Uint8 ChaAYSpaceDiff23[720*588]; 
+#pragma DATA_SECTION(ChaACbSpaceDiff23, ".ChaACbSpaceDiff23")
+Uint8 ChaACbSpaceDiff23[360*588]; 
+#pragma DATA_SECTION(ChaACrSpaceDiff23, ".ChaACrSpaceDiff23")
+Uint8 ChaACrSpaceDiff23[360*588];
+
+Uint32 YbufferDiff23  = 0x80400000;
+Uint32 CbbufferDiff23 = 0x804675c0;
+Uint32 CrbufferDiff23 = 0x8049b0a0;
+
+/*显示图像首地址，空间已在 vportdis.c 中分配*/
+Uint32 disYbuffer  = 0x81000000;
+Uint32 disCbbuffer = 0x810675c0; 
+Uint32 disCrbuffer = 0x8109b0a0;
 
 /*图像格式标志*/
 Uint8 NTSCorPAL = 0;
@@ -104,11 +168,15 @@ extern far void vectors();
 extern volatile Uint32 capNewFrame;
 extern volatile Uint32 disNewFrame;
 
+
+/********************************************************************/
+
 /*此程序可将视频采集口1 CH1(第二个通道)的数据经过Video Port0送出*/
 void main()
 {
 	Uint8 addrI2C;
 	int i;
+
 /*-------------------------------------------------------*/
 /* perform all initializations                           */
 /*-------------------------------------------------------*/
@@ -228,6 +296,7 @@ void main()
 	vpHchannel1 = bt656_8bit_ncfc(portNumber);
 
 /*----------------------------------------------------------*/
+	/*启动采集模块*/
 	bt656_capture_start(vpHchannel1);
 
 	/*等待第一帧数据采集完成*/
@@ -268,6 +337,9 @@ void main()
 			             (void *)(disYbuffer + i * numPixels),
 			             numPixels);
 			    /*传送Cb缓冲区*/ 
+			    DAT_copy((void *)(capCbbuffer + i * (numPixels >> 1)), 
+			             (void *)(disCrbuffer + i * (numPixels >> 1)),
+			             numPixels>>1);
 				/*传送Cr缓冲区*/
 			    DAT_copy((void *)(capCrbuffer + i * (numPixels >> 1)), 
 			             (void *)(disCrbuffer + i * (numPixels >> 1)),
