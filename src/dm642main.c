@@ -187,14 +187,26 @@ extern volatile Uint32 disNewFrame;
 void main()
 {
 	Uint8 addrI2C;
-	int i;
+	int i,j;
 
-	/*The next position to store a frame*/
+	/* The next position to store a frame */
 	Uint8 nextFrame;
+    Uint8 nextDiff;
+    
 	/* Current Buf addr */
-	Uint32 YBuf;
-	Uint32 CbBuf;
-	Uint32 CrBuf;
+	Uint32 YBuf, CbBuf, CrBuf;
+    /* Buf addr been subtract */
+    Uint32 YSubBuf, CbSubBuf, CrSubBuf;
+    /* Buf addr to be add */
+    Uint32 YAddBuf, CbAddBuf, CrAddBuf;
+    /* Buf addr to store results */
+    Uint32 YAnsBuf, CbAnsBuf, CrAnsBuf;
+    
+    /* Pointer to extract each byte */
+    Uint8 * sub;
+    Uint8 * sub2;
+    /* Current byte */
+    Uint8 * thisbyte;
 
 /*-------------------------------------------------------*/
 /* perform all initializations                           */
@@ -244,7 +256,7 @@ void main()
     _IIC_write(hVMD642I2C, addrI2C, 0x0D, output_format);
     _IIC_write(hVMD642I2C, addrI2C, 0x0F, pin_cfg);
     _IIC_write(hVMD642I2C, addrI2C, 0x1B, chro_ctrl_2);
-    /*ªÿ¡µ±«∞…„œÒ…Ë±∏µƒ∏Ò Ω*/
+    /*∂¡»° ”∆µ∏Ò Ω*/
     _IIC_read(hVMD642I2C, addrI2C, 0x8c, &vFromat);
     vFromat = vFromat & 0xff;
 	switch (vFromat)
@@ -361,7 +373,107 @@ void main()
 		}
 	}
 
-
+    /*…˙≥…¡Ω∏ˆ÷°≤ÓÕºœÒ*/
+    for (nextDiff = 1; nextDiff <= 2; nextDiff++)
+    {
+        switch (nextDiff) 
+        {
+            case 1:
+                YBuf = Ybuffer2;   YSubBuf = Ybuffer1;   YAnsBuf = YbufferDiff12;
+                CbBuf = Cbbuffer2; CbSubBuf = Cbbuffer1; CbAnsBuf = CbbufferDiff12;
+                CrBuf = Crbuffer2; CrSubBuf = Crbuffer1; CrAnsBuf = CrbufferDiff12;
+                break;
+            case 2:
+                YBuf = Ybuffer3;   YSubBuf = Ybuffer2;   YAnsBuf = YbufferDiff23;
+                CbBuf = Cbbuffer3; CbSubBuf = Cbbuffer2; CbAnsBuf = CbbufferDiff23;
+                CrBuf = Crbuffer3; CrSubBuf = Crbuffer2; CrAnsBuf = CrbufferDiff23;
+                break;
+        }
+        for (i = 0; i < numLines; i++)
+        {
+            for (j = 0; j < numPixels; j++)
+            {
+                sub  = (Uint8 *)(YBuf + i * numLines + j);
+                sub2 = (Uint8 *)(YSubBuf + i * numLines + j);
+                thisbyte = (Uint8 *)(YAnsBuf + i * numLines + j);
+                if (*sub - *sub2 > *sub) 
+                    *thisbyte = *sub2 - *sub;
+                else 
+                    *thisbyte = *sub - *sub2;
+            }
+        }
+        for (i = 0; i < numLines; i++)
+        {
+            for (j = 0; j < (numPixels >> 1); j++)
+            {
+                sub  = (Uint8 *)(CbBuf + i * numLines + j);
+                sub2 = (Uint8 *)(CbSubBuf + i * numLines + j);
+                thisbyte = (Uint8 *)(CbAnsBuf + i * numLines + j);
+                if (*sub - *sub2 > *sub) 
+                    *thisbyte = *sub2 - *sub;
+                else 
+                    *thisbyte = *sub - *sub2;
+            }
+        }
+        for (i = 0; i < numLines; i++)
+        {
+            for (j = 0; j < (numPixels >> 1); j++)
+            {
+                sub  = (Uint8 *)(CrBuf + i * numLines + j);
+                sub2 = (Uint8 *)(CrSubBuf + i * numLines + j);
+                thisbyte = (Uint8 *)(CrAnsBuf + i * numLines + j);
+                if (*sub - *sub2 > *sub) 
+                    *thisbyte = *sub2 - *sub;
+                else 
+                    *thisbyte = *sub - *sub2;
+            }
+        }
+    }
+    
+    /*∆¥∫œ÷°≤ÓÕºœÒ*/
+    YBuf = YbufferDiff12;   YAddBuf = YbufferDiff23;   YAnsBuf = disYbuffer;
+    CbBuf = CbbufferDiff12; CbAddBuf = CbbufferDiff23; CbAnsBuf = disCbbuffer;
+    CrBuf = CrbufferDiff23; CrAddBuf = CrbufferDiff23; CrAnsBuf = disCrbuffer;
+    for (i = 0; i < numLines; i++)
+    {
+        for (j = 0; j < numPixels; j++)
+        {
+            sub  = (Uint8 *)(YBuf + i * numLines + j);
+            sub2 = (Uint8 *)(YAddBuf + i * numLines + j);
+            thisbyte = (Uint8 *)(YAnsBuf + i * numLines + j);
+            if (*sub + *sub2 < *sub) 
+                *thisbyte = 0xFF;
+            else 
+                *thisbyte = *sub + *sub2;
+        }
+    }
+    for (i = 0; i < numLines; i++)
+    {
+        for (j = 0; j < (numPixels >> 1); j++)
+        {
+            sub  = (Uint8 *)(CbBuf + i * numLines + j);
+            sub2 = (Uint8 *)(CbAddBuf + i * numLines + j);
+            thisbyte = (Uint8 *)(CbAnsBuf + i * numLines + j);
+            if (*sub + *sub2 < *sub) 
+                *thisbyte = 0xFF;
+            else 
+                *thisbyte = *sub + *sub2;
+        }
+    }
+    for (i = 0; i < numLines; i++)
+    {
+        for (j = 0; j < (numPixels >> 1); j++)
+        {
+            sub  = (Uint8 *)(CrBuf + i * numLines + j);
+            sub2 = (Uint8 *)(CrAddBuf + i * numLines + j);
+            thisbyte = (Uint8 *)(CrAnsBuf + i * numLines + j);
+            if (*sub + *sub2 < *sub) 
+                *thisbyte = 0xFF;
+            else 
+                *thisbyte = *sub + *sub2;
+        }
+    }
+    
 	/*∆Ù∂Øœ‘ æƒ£øÈ*/
 	bt656_display_start(vpHchannel0);
 	/*Ω®¡¢ µ ±º∆À„—≠ª∑*/
