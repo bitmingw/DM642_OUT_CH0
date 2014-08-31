@@ -49,7 +49,7 @@ EMIFA_Config VMDEMIFConfig ={
 	   0x00000002, /*cesec0 CE0 space secondary control register value*/
 	   0x00000002, /*cesec1 CE1 space secondary control register value*/
 	   0x00000002, /*cesec2 CE2 space secondary control register value*/
-	   0x00000073 /*cesec3 CE3 space secondary control register value*/	
+	   0x00000073 /*cesec3 CE3 space secondary control register value*/
 };
 
 /*VMD642的IIC的设置结构*/
@@ -83,7 +83,7 @@ Uint8 misc_ctrl = 0x6D;
 Uint8 output_format = 0x47;
 // 地址为0 for cvbs port1,选择复合信号做为输入
 Uint8 input_sel = 0x00;
-/*地址为0xf，将Pin27设置成为CAPEN功能*/	
+/*地址为0xf，将Pin27设置成为CAPEN功能*/
 Uint8 pin_cfg = 0x02;
 /*地址为1B*/
 Uint8 chro_ctrl_2 = 0x14;
@@ -110,10 +110,10 @@ Uint32 capCbbuffer = 0x800675c0;
 Uint32 capCrbuffer = 0x8009b0a0;
 
 /*分配空间，记录第一帧图像首地址*/
-#pragma DATA_SECTION(ChaAYSpace1, ".ChaAYSpace1") 
-Uint8 ChaAYSpace1[720*588]; 
+#pragma DATA_SECTION(ChaAYSpace1, ".ChaAYSpace1")
+Uint8 ChaAYSpace1[720*588];
 #pragma DATA_SECTION(ChaACbSpace1, ".ChaACbSpace1")
-Uint8 ChaACbSpace1[360*588]; 
+Uint8 ChaACbSpace1[360*588];
 #pragma DATA_SECTION(ChaACrSpace1, ".ChaACrSpace1")
 Uint8 ChaACrSpace1[360*588];
 
@@ -122,10 +122,10 @@ Uint32 Cbbuffer1 = 0x801675c0;
 Uint32 Crbuffer1 = 0x8019b0a0;
 
 /*分配空间，记录第二帧图像首地址*/
-#pragma DATA_SECTION(ChaAYSpace2, ".ChaAYSpace2") 
-Uint8 ChaAYSpace2[720*588]; 
+#pragma DATA_SECTION(ChaAYSpace2, ".ChaAYSpace2")
+Uint8 ChaAYSpace2[720*588];
 #pragma DATA_SECTION(ChaACbSpace2, ".ChaACbSpace2")
-Uint8 ChaACbSpace2[360*588]; 
+Uint8 ChaACbSpace2[360*588];
 #pragma DATA_SECTION(ChaACrSpace2, ".ChaACrSpace2")
 Uint8 ChaACrSpace2[360*588];
 
@@ -134,10 +134,10 @@ Uint32 Cbbuffer2 = 0x802675c0;
 Uint32 Crbuffer2 = 0x8029b0a0;
 
 /*分配空间，记录第三帧图像首地址*/
-#pragma DATA_SECTION(ChaAYSpace3, ".ChaAYSpace3") 
-Uint8 ChaAYSpace3[720*588]; 
+#pragma DATA_SECTION(ChaAYSpace3, ".ChaAYSpace3")
+Uint8 ChaAYSpace3[720*588];
 #pragma DATA_SECTION(ChaACbSpace3, ".ChaACbSpace3")
-Uint8 ChaACbSpace3[360*588]; 
+Uint8 ChaACbSpace3[360*588];
 #pragma DATA_SECTION(ChaACrSpace3, ".ChaACrSpace3")
 Uint8 ChaACrSpace3[360*588];
 
@@ -146,10 +146,10 @@ Uint32 Cbbuffer3 = 0x803675c0;
 Uint32 Crbuffer3 = 0x8039b0a0;
 
 /*分配空间，记录第一二帧差图像首地址*/
-#pragma DATA_SECTION(ChaAYSpaceDiff12, ".ChaAYSpaceDiff12") 
-Uint8 ChaAYSpaceDiff12[720*588]; 
+#pragma DATA_SECTION(ChaAYSpaceDiff12, ".ChaAYSpaceDiff12")
+Uint8 ChaAYSpaceDiff12[720*588];
 #pragma DATA_SECTION(ChaACbSpaceDiff12, ".ChaACbSpaceDiff12")
-Uint8 ChaACbSpaceDiff12[360*588]; 
+Uint8 ChaACbSpaceDiff12[360*588];
 #pragma DATA_SECTION(ChaACrSpaceDiff12, ".ChaACrSpaceDiff12")
 Uint8 ChaACrSpaceDiff12[360*588];
 
@@ -158,10 +158,10 @@ Uint32 CbbufferDiff12 = 0x804675c0;
 Uint32 CrbufferDiff12 = 0x8049b0a0;
 
 /*分配空间，记录第二三帧差图像首地址*/
-#pragma DATA_SECTION(ChaAYSpaceDiff23, ".ChaAYSpaceDiff23") 
-Uint8 ChaAYSpaceDiff23[720*588]; 
+#pragma DATA_SECTION(ChaAYSpaceDiff23, ".ChaAYSpaceDiff23")
+Uint8 ChaAYSpaceDiff23[720*588];
 #pragma DATA_SECTION(ChaACbSpaceDiff23, ".ChaACbSpaceDiff23")
-Uint8 ChaACbSpaceDiff23[360*588]; 
+Uint8 ChaACbSpaceDiff23[360*588];
 #pragma DATA_SECTION(ChaACrSpaceDiff23, ".ChaACrSpaceDiff23")
 Uint8 ChaACrSpaceDiff23[360*588];
 
@@ -171,7 +171,7 @@ Uint32 CrbufferDiff23 = 0x8059b0a0;
 
 /*显示图像首地址，空间已在 vportdis.c 中分配*/
 Uint32 disYbuffer  = 0x81000000;
-Uint32 disCbbuffer = 0x810675c0; 
+Uint32 disCbbuffer = 0x810675c0;
 Uint32 disCrbuffer = 0x8109b0a0;
 
 /*图像格式标志*/
@@ -192,7 +192,7 @@ void main()
 	/* The next position to store a frame */
 	Uint8 nextFrame;
     Uint8 nextDiff;
-    
+
 	/* Current Buf addr */
 	Uint32 YBuf, CbBuf, CrBuf;
     /* Buf addr been subtract */
@@ -201,7 +201,7 @@ void main()
     Uint32 YAddBuf, CbAddBuf, CrAddBuf;
     /* Buf addr to store results */
     Uint32 YAnsBuf, CbAnsBuf, CrAnsBuf;
-    
+
     /* Pointer to extract each byte */
     Uint8 * sub;
     Uint8 * sub2;
@@ -229,9 +229,9 @@ void main()
     IRQ_reset(IRQ_EVT_VINT1);
     IRQ_reset(IRQ_EVT_VINT0);
     /*打开一个数据拷贝的数据通路*/
-    DAT_open(DAT_CHAANY, DAT_PRI_LOW, DAT_OPEN_2D);	
+    DAT_open(DAT_CHAANY, DAT_PRI_LOW, DAT_OPEN_2D);
 
-/*----------------------------------------------------------*/	
+/*----------------------------------------------------------*/
 	/*进行IIC的初始化*/
 	hVMD642I2C = I2C_open(I2C_PORT0, I2C_OPEN_RESET);
 	I2C_config(hVMD642I2C, &VMD642IIC_Config);
@@ -279,21 +279,21 @@ void main()
 		/*系统不支持的模式，重新配置*/
 		for(;;)
 		{}
-	}  
-			  
-/*----------------------------------------------------------*/	
+	}
+
+/*----------------------------------------------------------*/
 	/*进行SAA7121H的初始化*/
 
-	/*GPIO0输出为低，选择IIC0总线，配置图像输出*/				
+	/*GPIO0输出为低，选择IIC0总线，配置图像输出*/
 	GPIO_RSET(GPVAL, 0x0);
 	/*选择第一个5150，即U10*/
-	addrI2C = 0xB8 >> 1; 
+	addrI2C = 0xB8 >> 1;
 	/*将Video Port0的视频输入口的数据口设为高阻状态，
 	  使能SCLK，将第27脚设为输入*/
 	_IIC_write(hVMD642I2C, addrI2C, 0x03, 0x1);
 
 	/*配置SAA7121H*/
-	/*GPIO0输出为低，选择IIC1总线，配置图像输出*/	
+	/*GPIO0输出为低，选择IIC1总线，配置图像输出*/
 	GPIO_RSET(GPVAL, 0x1);
 
 	/*初始化Video Port0*/
@@ -301,25 +301,25 @@ void main()
 	portNumber = 0;
 	vpHchannel0 = bt656_8bit_ncfd(portNumber);
 
-	addrI2C = 0x88 >> 1;					      
+	addrI2C = 0x88 >> 1;
 	for(i=0; i<43; i++)
 	{
 		if(NTSCorPAL == 1)
 		{
-			_IIC_write(hVMD642I2C, 
+			_IIC_write(hVMD642I2C,
 					   addrI2C,
-					   (sa7121hNTSC[i].regsubaddr), 
+					   (sa7121hNTSC[i].regsubaddr),
 					   (sa7121hNTSC[i].regvule));
 		}
 		else
 		{
-			_IIC_write(hVMD642I2C, 
+			_IIC_write(hVMD642I2C,
 					   addrI2C,
-					   (sa7121hPAL[i].regsubaddr), 
-					   (sa7121hPAL[i].regvule));	
-		}		
+					   (sa7121hPAL[i].regsubaddr),
+					   (sa7121hPAL[i].regvule));
+		}
 	}
-	
+
 /*----------------------------------------------------------*/
 	/*初始化Video Port1*/
 	/*将Video Port1设为采集输入*/
@@ -340,43 +340,44 @@ void main()
 
 		switch (nextFrame)
 		{
-			case 1: 
+			case 1:
 				YBuf = Ybuffer1;
 				CbBuf = Cbbuffer1;
 				CrBuf = Crbuffer1;
 				break;
-			case 2: 
+			case 2:
 				YBuf = Ybuffer2;
 				CbBuf = Cbbuffer2;
 				CrBuf = Crbuffer2;
 				break;
-			case 3: 
+			case 3:
 				YBuf = Ybuffer3;
 				CbBuf = Cbbuffer3;
 				CrBuf = Crbuffer3;
-				break;		
+				break;
 		}
 		for(i=0; i<numLines; i++)
 		{
 			/*传送Y缓冲区*/
-			DAT_copy((void *)(capYbuffer + i * numPixels), 
+			DAT_copy((void *)(capYbuffer + i * numPixels),
 		             (void *)(YBuf + i * numPixels),
 		             numPixels);
 		    /*传送Cb缓冲区*/
-		    DAT_copy((void *)(capCbbuffer + i * (numPixels >> 1)), 
+		    DAT_copy((void *)(capCbbuffer + i * (numPixels >> 1)),
 		             (void *)(CbBuf + i * (numPixels >> 1)),
 		             numPixels>>1);
 			/*传送Cr缓冲区*/
-		    DAT_copy((void *)(capCrbuffer + i * (numPixels >> 1)), 
+		    DAT_copy((void *)(capCrbuffer + i * (numPixels >> 1)),
 		             (void *)(CrBuf + i * (numPixels >> 1)),
 		             numPixels>>1);
 		}
 	}
+    nextFrame = 1;  /*给出下一帧的位置*/
 
     /*生成两个帧差图像*/
     for (nextDiff = 1; nextDiff <= 2; nextDiff++)
     {
-        switch (nextDiff) 
+        switch (nextDiff)
         {
             case 1:
                 YBuf = Ybuffer2;   YSubBuf = Ybuffer1;   YAnsBuf = YbufferDiff12;
@@ -396,9 +397,9 @@ void main()
                 sub  = (Uint8 *)(YBuf + i * numLines + j);
                 sub2 = (Uint8 *)(YSubBuf + i * numLines + j);
                 thisbyte = (Uint8 *)(YAnsBuf + i * numLines + j);
-                if (*sub - *sub2 > *sub) 
+                if (*sub - *sub2 > *sub)
                     *thisbyte = *sub2 - *sub;
-                else 
+                else
                     *thisbyte = *sub - *sub2;
             }
         }
@@ -409,9 +410,9 @@ void main()
                 sub  = (Uint8 *)(CbBuf + i * numLines + j);
                 sub2 = (Uint8 *)(CbSubBuf + i * numLines + j);
                 thisbyte = (Uint8 *)(CbAnsBuf + i * numLines + j);
-                if (*sub - *sub2 > *sub) 
+                if (*sub - *sub2 > *sub)
                     *thisbyte = *sub2 - *sub;
-                else 
+                else
                     *thisbyte = *sub - *sub2;
             }
         }
@@ -422,18 +423,18 @@ void main()
                 sub  = (Uint8 *)(CrBuf + i * numLines + j);
                 sub2 = (Uint8 *)(CrSubBuf + i * numLines + j);
                 thisbyte = (Uint8 *)(CrAnsBuf + i * numLines + j);
-                if (*sub - *sub2 > *sub) 
+                if (*sub - *sub2 > *sub)
                     *thisbyte = *sub2 - *sub;
-                else 
+                else
                     *thisbyte = *sub - *sub2;
             }
         }
     }
-    
-    /*拼合帧差图像*/
+
+    /*拼合帧差图像，并传送至显示区*/
     YBuf = YbufferDiff12;   YAddBuf = YbufferDiff23;   YAnsBuf = disYbuffer;
     CbBuf = CbbufferDiff12; CbAddBuf = CbbufferDiff23; CbAnsBuf = disCbbuffer;
-    CrBuf = CrbufferDiff23; CrAddBuf = CrbufferDiff23; CrAnsBuf = disCrbuffer;
+    CrBuf = CrbufferDiff12; CrAddBuf = CrbufferDiff23; CrAnsBuf = disCrbuffer;
     for (i = 0; i < numLines; i++)
     {
         for (j = 0; j < numPixels; j++)
@@ -441,9 +442,9 @@ void main()
             sub  = (Uint8 *)(YBuf + i * numLines + j);
             sub2 = (Uint8 *)(YAddBuf + i * numLines + j);
             thisbyte = (Uint8 *)(YAnsBuf + i * numLines + j);
-            if (*sub + *sub2 < *sub) 
+            if (*sub + *sub2 < *sub)
                 *thisbyte = 0xFF;
-            else 
+            else
                 *thisbyte = *sub + *sub2;
         }
     }
@@ -454,9 +455,9 @@ void main()
             sub  = (Uint8 *)(CbBuf + i * numLines + j);
             sub2 = (Uint8 *)(CbAddBuf + i * numLines + j);
             thisbyte = (Uint8 *)(CbAnsBuf + i * numLines + j);
-            if (*sub + *sub2 < *sub) 
+            if (*sub + *sub2 < *sub)
                 *thisbyte = 0xFF;
-            else 
+            else
                 *thisbyte = *sub + *sub2;
         }
     }
@@ -467,13 +468,13 @@ void main()
             sub  = (Uint8 *)(CrBuf + i * numLines + j);
             sub2 = (Uint8 *)(CrAddBuf + i * numLines + j);
             thisbyte = (Uint8 *)(CrAnsBuf + i * numLines + j);
-            if (*sub + *sub2 < *sub) 
+            if (*sub + *sub2 < *sub)
                 *thisbyte = 0xFF;
-            else 
+            else
                 *thisbyte = *sub + *sub2;
         }
     }
-    
+
 	/*启动显示模块*/
 	bt656_display_start(vpHchannel0);
 	/*建立实时计算循环*/
@@ -482,24 +483,182 @@ void main()
 		/*当采集区的数据已经采集好，而显示缓冲区的数据已空*/
 		if((capNewFrame == 1)&&(disNewFrame == 1))
 		{
-			/*将数据装入显示缓冲区，并清采集完成的标志*/
+			/*将数据存入显示缓冲区，并清除采集完成的标志*/
 			capNewFrame =0;
+
+            /*传送一帧图像*/
+            switch (nextFrame)
+            {
+                case 1:
+                    YBuf = Ybuffer1;
+                    CbBuf = Cbbuffer1;
+                    CrBuf = Crbuffer1;
+                    break;
+                case 2:
+                    YBuf = Ybuffer2;
+                    CbBuf = Cbbuffer2;
+                    CrBuf = Crbuffer2;
+                    break;
+                case 3:
+                    YBuf = Ybuffer3;
+                    CbBuf = Cbbuffer3;
+                    CrBuf = Crbuffer3;
+                    break;
+            }
+            for(i=0; i<numLines; i++)
+            {
+                /*传送Y缓冲区*/
+                DAT_copy((void *)(capYbuffer + i * numPixels),
+                         (void *)(YBuf + i * numPixels),
+                         numPixels);
+                /*传送Cb缓冲区*/
+                DAT_copy((void *)(capCbbuffer + i * (numPixels >> 1)),
+                         (void *)(CbBuf + i * (numPixels >> 1)),
+                         numPixels>>1);
+                /*传送Cr缓冲区*/
+                DAT_copy((void *)(capCrbuffer + i * (numPixels >> 1)),
+                         (void *)(CrBuf + i * (numPixels >> 1)),
+                         numPixels>>1);
+            }
+            if (nextFrame >= 3)
+                nextFrame = 1;
+            else
+                nextFrame ++;
+
+            /*计算帧差图像*/
+            for (nextDiff = 1; nextDiff <= 2; nextDiff++)
+            {
+                switch (nextDiff)
+                {
+                    case 1:
+                        YAnsBuf = YbufferDiff12; CbAnsBuf = CbbufferDiff12; CrAnsBuf = CrbufferDiff12;
+                        switch (nextFrame)
+                        {
+                            case 1:
+                                YBuf = Ybuffer2;   YSubBuf = Ybuffer1;
+                                CbBuf = Cbbuffer2; CbSubBuf = Cbbuffer1;
+                                CrBuf = Crbuffer2; CrSubBuf = Crbuffer1;
+                                break;
+                            case 2:
+                                YBuf = Ybuffer3;   YSubBuf = Ybuffer2;
+                                CbBuf = Cbbuffer3; CbSubBuf = Cbbuffer2;
+                                CrBuf = Crbuffer3; CrSubBuf = Crbuffer2;
+                                break;
+                            case 3:
+                                YBuf = Ybuffer1;   YSubBuf = Ybuffer3;
+                                CbBuf = Cbbuffer1; CbSubBuf = Cbbuffer3;
+                                CrBuf = Crbuffer1; CrSubBuf = Crbuffer3;
+                                break;
+                        }
+                        break;
+                    case 2:
+                        YAnsBuf = YbufferDiff23; CbAnsBuf = CbbufferDiff23; CrAnsBuf = CrbufferDiff23;
+                        switch (nextFrame)
+                        {
+                            case 1:
+                                YBuf = Ybuffer3;   YSubBuf = Ybuffer2;
+                                CbBuf = Cbbuffer3; CbSubBuf = Cbbuffer2;
+                                CrBuf = Crbuffer3; CrSubBuf = Crbuffer2;
+                                break;
+                            case 2:
+                                YBuf = Ybuffer1;   YSubBuf = Ybuffer3;
+                                CbBuf = Cbbuffer1; CbSubBuf = Cbbuffer3;
+                                CrBuf = Crbuffer1; CrSubBuf = Crbuffer3;
+                                break;
+                            case 3:
+                                YBuf = Ybuffer2;   YSubBuf = Ybuffer1;
+                                CbBuf = Cbbuffer2; CbSubBuf = Cbbuffer1;
+                                CrBuf = Crbuffer2; CrSubBuf = Crbuffer1;
+                        }
+                        break;
+                }
+                for (i = 0; i < numLines; i++)
+                {
+                    for (j = 0; j < numPixels; j++)
+                    {
+                        sub  = (Uint8 *)(YBuf + i * numLines + j);
+                        sub2 = (Uint8 *)(YSubBuf + i * numLines + j);
+                        thisbyte = (Uint8 *)(YAnsBuf + i * numLines + j);
+                        if (*sub - *sub2 > *sub)
+                            *thisbyte = *sub2 - *sub;
+                        else
+                            *thisbyte = *sub - *sub2;
+                    }
+                }
+                for (i = 0; i < numLines; i++)
+                {
+                    for (j = 0; j < (numPixels >> 1); j++)
+                    {
+                        sub  = (Uint8 *)(CbBuf + i * numLines + j);
+                        sub2 = (Uint8 *)(CbSubBuf + i * numLines + j);
+                        thisbyte = (Uint8 *)(CbAnsBuf + i * numLines + j);
+                        if (*sub - *sub2 > *sub)
+                            *thisbyte = *sub2 - *sub;
+                        else
+                            *thisbyte = *sub - *sub2;
+                    }
+                }
+                for (i = 0; i < numLines; i++)
+                {
+                    for (j = 0; j < (numPixels >> 1); j++)
+                    {
+                        sub  = (Uint8 *)(CrBuf + i * numLines + j);
+                        sub2 = (Uint8 *)(CrSubBuf + i * numLines + j);
+                        thisbyte = (Uint8 *)(CrAnsBuf + i * numLines + j);
+                        if (*sub - *sub2 > *sub)
+                            *thisbyte = *sub2 - *sub;
+                        else
+                            *thisbyte = *sub - *sub2;
+                    }
+                }
+            }
+
+            /*拼合帧差图像，并传送至显示区*/
+            YBuf = YbufferDiff12;   YAddBuf = YbufferDiff23;   YAnsBuf = disYbuffer;
+            CbBuf = CbbufferDiff12; CbAddBuf = CbbufferDiff23; CbAnsBuf = disCbbuffer;
+            CrBuf = CrbufferDiff12; CrAddBuf = CrbufferDiff23; CrAnsBuf = disCrbuffer;
+            for (i = 0; i < numLines; i++)
+            {
+                for (j = 0; j < numPixels; j++)
+                {
+                    sub  = (Uint8 *)(YBuf + i * numLines + j);
+                    sub2 = (Uint8 *)(YAddBuf + i * numLines + j);
+                    thisbyte = (Uint8 *)(YAnsBuf + i * numLines + j);
+                    if (*sub + *sub2 < *sub)
+                        *thisbyte = 0xFF;
+                    else
+                        *thisbyte = *sub + *sub2;
+                }
+            }
+            for (i = 0; i < numLines; i++)
+            {
+                for (j = 0; j < (numPixels >> 1); j++)
+                {
+                    sub  = (Uint8 *)(CbBuf + i * numLines + j);
+                    sub2 = (Uint8 *)(CbAddBuf + i * numLines + j);
+                    thisbyte = (Uint8 *)(CbAnsBuf + i * numLines + j);
+                    if (*sub + *sub2 < *sub)
+                        *thisbyte = 0xFF;
+                    else
+                        *thisbyte = *sub + *sub2;
+                }
+            }
+            for (i = 0; i < numLines; i++)
+            {
+                for (j = 0; j < (numPixels >> 1); j++)
+                {
+                    sub  = (Uint8 *)(CrBuf + i * numLines + j);
+                    sub2 = (Uint8 *)(CrAddBuf + i * numLines + j);
+                    thisbyte = (Uint8 *)(CrAnsBuf + i * numLines + j);
+                    if (*sub + *sub2 < *sub)
+                        *thisbyte = 0xFF;
+                    else
+                        *thisbyte = *sub + *sub2;
+                }
+            }
+
+            /*提示显示缓冲区已有数据*/
 			disNewFrame =0;
-			for(i=0;i<numLines;i++)
-			{
-				/*传送Y缓冲区*/
-				DAT_copy((void *)(capYbuffer + i * numPixels), 
-			             (void *)(disYbuffer + i * numPixels),
-			             numPixels);
-			    /*传送Cb缓冲区*/ 
-			    DAT_copy((void *)(capCbbuffer + i * (numPixels >> 1)), 
-			             (void *)(disCrbuffer + i * (numPixels >> 1)),
-			             numPixels>>1);
-				/*传送Cr缓冲区*/
-			    DAT_copy((void *)(capCrbuffer + i * (numPixels >> 1)), 
-			             (void *)(disCrbuffer + i * (numPixels >> 1)),
-			             numPixels>>1);
-			 }
 		}
 	}
-}     
+}
