@@ -5,6 +5,8 @@
 
 [dm642main.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "dm642main.c"
 
+[frame_operation.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "frame_operation.c"
+
 [iic.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "iic.c"
 
 [ves_dm642.asm] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "ves_dm642.asm"
