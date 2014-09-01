@@ -18,6 +18,7 @@
                  (void *)(dstY + i * numPixels),
                  numPixels);
 
+        /*
         DAT_copy((void *)(srcCb + i * (numPixels >> 1)),
                  (void *)(dstCb + i * (numPixels >> 1)),
                  numPixels>>1);
@@ -25,6 +26,7 @@
         DAT_copy((void *)(srcCr + i * (numPixels >> 1)),
                  (void *)(dstCr + i * (numPixels >> 1)),
                  numPixels>>1);
+        */
     }
 }
 
@@ -47,6 +49,7 @@ void gen_diff_frame(int numLines, int numPixels, int Y, int Cb, int Cr, \
                 *diffbyte = *sub - *sub2;
         }
     }
+    /*
     for (i = 0; i < numLines; i++)
     {
         for (j = 0; j < (numPixels >> 1); j++)
@@ -73,6 +76,7 @@ void gen_diff_frame(int numLines, int numPixels, int Y, int Cb, int Cr, \
                 *diffbyte = *sub - *sub2;
         }
     }
+    */
 }
 
 void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int diff1Cr, \
@@ -98,6 +102,7 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
     {
         for (j = 0; j < (numPixels >> 1); j++)
         {
+            /*
             sub  = (Uint8 *)(diff1Cb + i * numLines + j);
             sub2 = (Uint8 *)(diff2Cb + i * numLines + j);
             disp = (Uint8 *)(dispCb + i * numLines + j);
@@ -105,12 +110,16 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
                 *disp = 0xFF;
             else
                 *disp = *sub + *sub2;
+            */
+            disp = (Uint8 *)(dispCb + i * numLines + j);
+            *disp = 0x80;
         }
     }
     for (i = 0; i < numLines; i++)
     {
         for (j = 0; j < (numPixels >> 1); j++)
         {
+            /*
             sub  = (Uint8 *)(diff1Cr + i * numLines + j);
             sub2 = (Uint8 *)(diff2Cr + i * numLines + j);
             disp = (Uint8 *)(dispCr + i * numLines + j);
@@ -118,6 +127,9 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
                 *disp = 0xFF;
             else
                 *disp = *sub + *sub2;
+            */
+            disp = (Uint8 *)(dispCr + i * numLines + j);
+            *disp = 0x80;
         }
     }
 }
