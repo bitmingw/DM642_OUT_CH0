@@ -35,7 +35,12 @@ void gen_diff_frame(int numLines, int numPixels, int Y, int Cb, int Cr, \
 {
     int i, j;
     Uint8 *sub, *sub2, *diffbyte;
+    Uint8 byte1, byte2;
     
+    /* For Y channel, set threshold to 0.5
+     * i.e. if the MSB is different, then generate 0xFF
+     * Otherwise generate 0x00
+     */
     for (i = 0; i < numLines; i++)
     {
         for (j = 0; j < numPixels; j++)
@@ -43,10 +48,12 @@ void gen_diff_frame(int numLines, int numPixels, int Y, int Cb, int Cr, \
             sub  = (Uint8 *)(Y + i * numLines + j);
             sub2 = (Uint8 *)(subY + i * numLines + j);
             diffbyte = (Uint8 *)(dstY + i * numLines + j);
-            if (*sub - *sub2 > *sub)
-                *diffbyte = *sub2 - *sub;
+            byte1 = (*sub) & 0x80;
+            byte2 = (*sub2) & 0x80;
+            if (byte1 ^ byte2)
+                *diffbyte = 0xFF;
             else
-                *diffbyte = *sub - *sub2;
+                *diffbyte = 0x00;
         }
     }
     /*
@@ -85,6 +92,9 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
     int i, j;
     Uint8 *sub, *sub2, *disp;
     
+    /* For Y output, if both frame is non-negative (both 0xFF) then display 0xFF
+     * Otherwise display 0x00
+     */
     for (i = 0; i < numLines; i++)
     {
         for (j = 0; j < numPixels; j++)
@@ -92,10 +102,10 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
             sub  = (Uint8 *)(diff1Y + i * numLines + j);
             sub2 = (Uint8 *)(diff2Y + i * numLines + j);
             disp = (Uint8 *)(dispY + i * numLines + j);
-            if (*sub + *sub2 < *sub)
+            if (*sub & *sub2)
                 *disp = 0xFF;
             else
-                *disp = *sub + *sub2;
+                *disp = 0x00;
         }
     }
     for (i = 0; i < numLines; i++)
