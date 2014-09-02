@@ -18,7 +18,6 @@
                  (void *)(dstY + i * numPixels),
                  numPixels);
 
-        /*
         DAT_copy((void *)(srcCb + i * (numPixels >> 1)),
                  (void *)(dstCb + i * (numPixels >> 1)),
                  numPixels>>1);
@@ -26,7 +25,6 @@
         DAT_copy((void *)(srcCr + i * (numPixels >> 1)),
                  (void *)(dstCr + i * (numPixels >> 1)),
                  numPixels>>1);
-        */
     }
 }
 
@@ -35,12 +33,7 @@ void gen_diff_frame(int numLines, int numPixels, int Y, int Cb, int Cr, \
 {
     int i, j;
     Uint8 *sub, *sub2, *diffbyte;
-    Uint8 byte1, byte2;
-    
-    /* For Y channel, set threshold to 0.5
-     * i.e. if the MSB is different, then generate 0xFF
-     * Otherwise generate 0x00
-     */
+
     for (i = 0; i < numLines; i++)
     {
         for (j = 0; j < numPixels; j++)
@@ -48,15 +41,12 @@ void gen_diff_frame(int numLines, int numPixels, int Y, int Cb, int Cr, \
             sub  = (Uint8 *)(Y + i * numLines + j);
             sub2 = (Uint8 *)(subY + i * numLines + j);
             diffbyte = (Uint8 *)(dstY + i * numLines + j);
-            byte1 = (*sub) & 0x80;
-            byte2 = (*sub2) & 0x80;
-            if (byte1 ^ byte2)
-                *diffbyte = 0xFF;
+            if (*sub - *sub2 > *sub)
+                *diffbyte = *sub2 - *sub;
             else
-                *diffbyte = 0x00;
+                *diffbyte = *sub - *sub2;
         }
     }
-    /*
     for (i = 0; i < numLines; i++)
     {
         for (j = 0; j < (numPixels >> 1); j++)
@@ -83,10 +73,97 @@ void gen_diff_frame(int numLines, int numPixels, int Y, int Cb, int Cr, \
                 *diffbyte = *sub - *sub2;
         }
     }
-    */
 }
 
 void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int diff1Cr, \
+    int diff2Y, int diff2Cb, int diff2Cr, int dispY, int dispCb, int dispCr)
+{
+    int i, j;
+    Uint8 *sub, *sub2, *disp;
+    
+    for (i = 0; i < numLines; i++)
+    {
+        for (j = 0; j < numPixels; j++)
+        {
+            sub  = (Uint8 *)(diff1Y + i * numLines + j);
+            sub2 = (Uint8 *)(diff2Y + i * numLines + j);
+            disp = (Uint8 *)(dispY + i * numLines + j);
+            if (*sub + *sub2 < *sub)
+                *disp = 0xFF;
+            else
+                *disp = *sub + *sub2;
+        }
+    }
+    for (i = 0; i < numLines; i++)
+    {
+        for (j = 0; j < (numPixels >> 1); j++)
+        {
+            sub  = (Uint8 *)(diff1Cb + i * numLines + j);
+            sub2 = (Uint8 *)(diff2Cb + i * numLines + j);
+            disp = (Uint8 *)(dispCb + i * numLines + j);
+            if (*sub + *sub2 < *sub)
+                *disp = 0xFF;
+            else
+                *disp = *sub + *sub2;
+        }
+    }
+    for (i = 0; i < numLines; i++)
+    {
+        for (j = 0; j < (numPixels >> 1); j++)
+        {
+            sub  = (Uint8 *)(diff1Cr + i * numLines + j);
+            sub2 = (Uint8 *)(diff2Cr + i * numLines + j);
+            disp = (Uint8 *)(dispCr + i * numLines + j);
+            if (*sub + *sub2 < *sub)
+                *disp = 0xFF;
+            else
+                *disp = *sub + *sub2;
+        }
+    }
+}
+
+
+
+ void send_frame_gray(int numLines, int numPixels, int srcY, int dstY)
+{
+    int i;
+    
+    for(i=0; i<numLines; i++)
+    {
+        DAT_copy((void *)(srcY + i * numPixels),
+                 (void *)(dstY + i * numPixels),
+                 numPixels);
+    }
+}
+
+void gen_diff_frame_gray(int numLines, int numPixels, int Y, int subY, int dstY)
+{
+    int i, j;
+    Uint8 *sub, *sub2, *diffbyte;
+    Uint8 byte1, byte2;
+    
+    /* For Y channel, set threshold to 0.5
+     * i.e. if the MSB is different, then generate 0xFF
+     * Otherwise generate 0x00
+     */
+    for (i = 0; i < numLines; i++)
+    {
+        for (j = 0; j < numPixels; j++)
+        {
+            sub  = (Uint8 *)(Y + i * numLines + j);
+            sub2 = (Uint8 *)(subY + i * numLines + j);
+            diffbyte = (Uint8 *)(dstY + i * numLines + j);
+            byte1 = (*sub) & 0x80;
+            byte2 = (*sub2) & 0x80;
+            if (byte1 ^ byte2)
+                *diffbyte = 0xFF;
+            else
+                *diffbyte = 0x00;
+        }
+    }
+}
+
+void merge_diff_frame_gray(int numLines, int numPixels, int diff1Y, int diff1Cb, int diff1Cr, \
     int diff2Y, int diff2Cb, int diff2Cr, int dispY, int dispCb, int dispCr)
 {
     int i, j;
@@ -112,15 +189,6 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
     {
         for (j = 0; j < (numPixels >> 1); j++)
         {
-            /*
-            sub  = (Uint8 *)(diff1Cb + i * numLines + j);
-            sub2 = (Uint8 *)(diff2Cb + i * numLines + j);
-            disp = (Uint8 *)(dispCb + i * numLines + j);
-            if (*sub + *sub2 < *sub)
-                *disp = 0xFF;
-            else
-                *disp = *sub + *sub2;
-            */
             disp = (Uint8 *)(dispCb + i * numLines + j);
             *disp = 0x80;
         }
@@ -129,15 +197,6 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
     {
         for (j = 0; j < (numPixels >> 1); j++)
         {
-            /*
-            sub  = (Uint8 *)(diff1Cr + i * numLines + j);
-            sub2 = (Uint8 *)(diff2Cr + i * numLines + j);
-            disp = (Uint8 *)(dispCr + i * numLines + j);
-            if (*sub + *sub2 < *sub)
-                *disp = 0xFF;
-            else
-                *disp = *sub + *sub2;
-            */
             disp = (Uint8 *)(dispCr + i * numLines + j);
             *disp = 0x80;
         }

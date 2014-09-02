@@ -330,7 +330,7 @@ void main()
 	{
 		/*等待一帧数据采集完成*/
 		while(capNewFrame == 0){}
-		/*将数据存入显示缓冲区，并清采集完成的标志*/
+		/*清除采集完成的标志，开始下一帧采集*/
 		capNewFrame = 0;
 
 		switch (nextFrame)
@@ -345,8 +345,7 @@ void main()
 				YBuf = Ybuffer3; CbBuf = Cbbuffer3; CrBuf = Crbuffer3;
 				break;
 		}
-        send_frame(numLines, numPixels, capYbuffer, capCbbuffer, capCrbuffer, \
-            YBuf, CbBuf, CrBuf);
+        send_frame_gray(numLines, numPixels, capYbuffer, YBuf);
 	}
     nextFrame = 1;  /*给出下一帧的位置*/
 
@@ -366,15 +365,14 @@ void main()
                 CrBuf = Crbuffer3; CrSubBuf = Crbuffer2; CrAnsBuf = CrbufferDiff23;
                 break;
         }
-        gen_diff_frame(numLines, numPixels, YBuf, CbBuf, CrBuf, YSubBuf, CbSubBuf, CrSubBuf, \
-            YAnsBuf, CbAnsBuf, CrAnsBuf);
+        gen_diff_frame_gray(numLines, numPixels, YBuf, YSubBuf, YAnsBuf);
     }
 
     /*拼合帧差图像，并传送至显示区*/
     YBuf = YbufferDiff12;   YAddBuf = YbufferDiff23;
     CbBuf = CbbufferDiff12; CbAddBuf = CbbufferDiff23;
     CrBuf = CrbufferDiff12; CrAddBuf = CrbufferDiff23;
-    merge_diff_frame(numLines, numPixels, YBuf, CbBuf, CrBuf, YAddBuf, CbAddBuf, CrAddBuf, \
+    merge_diff_frame_gray(numLines, numPixels, YBuf, CbBuf, CrBuf, YAddBuf, CbAddBuf, CrAddBuf, \
         disYbuffer, disCbbuffer, disCrbuffer);
 
 	/*启动显示模块*/
@@ -385,8 +383,8 @@ void main()
 		/*当采集区的数据已经采集好，而显示缓冲区的数据已空*/
 		if((capNewFrame == 1)&&(disNewFrame == 1))
 		{
-			/*将数据存入显示缓冲区，并清除采集完成的标志*/
-			capNewFrame =0;
+			/*清除采集完成的标志，提示可以显示缓冲区图像*/
+			capNewFrame =0;  disNewFrame =0;
 
             /*传送一帧图像*/
             switch (nextFrame)
@@ -401,9 +399,8 @@ void main()
                     YBuf = Ybuffer3; CbBuf = Cbbuffer3; CrBuf = Crbuffer3;
                     break;
             }
-            send_frame(numLines, numPixels, capYbuffer, capCbbuffer, capCrbuffer, \
-                YBuf, CbBuf, CrBuf);
-            
+            send_frame_gray(numLines, numPixels, capYbuffer, YBuf);
+
             /*空间指针更新至下个位置*/
             if (nextFrame >= 3)
                 nextFrame = 1;
@@ -457,19 +454,15 @@ void main()
                         }
                         break;
                 }
-                gen_diff_frame(numLines, numPixels, YBuf, CbBuf, CrBuf, YSubBuf, CbSubBuf, CrSubBuf, \
-                    YAnsBuf, CbAnsBuf, CrAnsBuf);
+                gen_diff_frame_gray(numLines, numPixels, YBuf, YSubBuf, YAnsBuf);
             }
 
             /*拼合帧差图像，并传送至显示区*/
             YBuf = YbufferDiff12;   YAddBuf = YbufferDiff23;
             CbBuf = CbbufferDiff12; CbAddBuf = CbbufferDiff23;
             CrBuf = CrbufferDiff12; CrAddBuf = CrbufferDiff23;
-            merge_diff_frame(numLines, numPixels, YBuf, CbBuf, CrBuf, YAddBuf, CbAddBuf, CrAddBuf, \
+            merge_diff_frame_gray(numLines, numPixels, YBuf, CbBuf, CrBuf, YAddBuf, CbAddBuf, CrAddBuf, \
                 disYbuffer, disCbbuffer, disCrbuffer);
-
-            /*提示显示缓冲区已有数据*/
-			disNewFrame =0;
 		}
 	}
 }
