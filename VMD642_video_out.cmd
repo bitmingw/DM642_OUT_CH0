@@ -31,6 +31,7 @@ SECTIONS
     .sysmem     >       L2
     .tables     >       L2
     .cio        >       L2
+    .cache      >       L2
 
     .capChaAYSpace >    VIN
     .capChaACbSpace >   VIN

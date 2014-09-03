@@ -5,13 +5,14 @@
 
 #include <csl.h>
 #include <csl_emifa.h>
+#include <csl_dat.h>
 #include "frame_operation.h"
 
  void send_frame(int numLines, int numPixels, int srcY, int srcCb, int srcCr, \
     int dstY, int dstCb, int dstCr)
 {
     int i;
-    
+
     for(i=0; i<numLines; i++)
     {
         DAT_copy((void *)(srcY + i * numPixels),
@@ -80,7 +81,7 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
 {
     int i, j;
     Uint8 *sub, *sub2, *disp;
-    
+
     for (i = 0; i < numLines; i++)
     {
         for (j = 0; j < numPixels; j++)
@@ -127,7 +128,7 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
  void send_frame_gray(int numLines, int numPixels, int srcY, int dstY)
 {
     int i;
-    
+
     for(i=0; i<numLines; i++)
     {
         DAT_copy((void *)(srcY + i * numPixels),
@@ -139,27 +140,29 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
 void gen_diff_frame_gray(int numLines, int numPixels, int Y, int subY, int dstY)
 {
     int i, j;
-    Uint8 *sub, *sub2, *diffbyte;
-    Uint8 byte1, byte2;
-    
+    Uint8 sub, sub2;
+    extern Uint8 CACHE_A[720];
+    extern Uint8 CACHE_B[720];
+    extern Uint8 CACHE_S[720];
+
     /* For Y channel, set threshold to 0.5
      * i.e. if the MSB is different, then generate 0xFF
      * Otherwise generate 0x00
      */
     for (i = 0; i < numLines; i++)
     {
+        DAT_copy((void *)(Y + i * numPixels),
+                 CACHE_A, numPixels);
+        DAT_copy((void *)(subY + i * numPixels),
+                 CACHE_B, numPixels);
         for (j = 0; j < numPixels; j++)
         {
-            sub  = (Uint8 *)(Y + i * numPixels + j);
-            sub2 = (Uint8 *)(subY + i * numPixels + j);
-            diffbyte = (Uint8 *)(dstY + i * numPixels + j);
-            byte1 = (*sub) & 0x80;
-            byte2 = (*sub2) & 0x80;
-            if (byte1 ^ byte2)
-                *diffbyte = 0xFF;
-            else
-                *diffbyte = 0x00;
+            sub = CACHE_A[j] & 0x80;    /*MSB of byte*/
+            sub2 = CACHE_B[j] & 0x80;    /*MSB of byte*/
+            CACHE_S[j] = (sub ^ sub2) ? 0xFF : 0x00;
         }
+        DAT_copy(CACHE_S,
+                 (void *)(dstY + i * numPixels), numPixels);
     }
 }
 
@@ -167,13 +170,27 @@ void merge_diff_frame_gray(int numLines, int numPixels, int diff1Y, int diff1Cb,
     int diff2Y, int diff2Cb, int diff2Cr, int dispY, int dispCb, int dispCr)
 {
     int i, j;
-    Uint8 *sub, *sub2, *disp;
-    
+    Uint32 fillVal = 0x80808080;    /*32bit value to cover Cb and Cr channel*/
+    extern Uint8 CACHE_A[720];
+    extern Uint8 CACHE_B[720];
+    extern Uint8 CACHE_S[720];
+
     /* For Y output, if both frame is non-negative (both 0xFF) then display 0xFF
      * Otherwise display 0x00
      */
     for (i = 0; i < numLines; i++)
     {
+        DAT_copy((void *)(diff1Y + i * numPixels),
+                 CACHE_A, numPixels);
+        DAT_copy((void *)(diff2Y + i * numPixels),
+                 CACHE_B, numPixels);
+        for (j = 0; j < numPixels; j++)
+        {
+            CACHE_S[j] = (CACHE_A[j] & CACHE_B[j]) ? 0xFF : 0x00;
+        }
+        DAT_copy(CACHE_S,
+                 (void *)(dispY + i * numPixels), numPixels);
+        /*
         for (j = 0; j < numPixels; j++)
         {
             sub  = (Uint8 *)(diff1Y + i * numPixels + j);
@@ -184,21 +201,15 @@ void merge_diff_frame_gray(int numLines, int numPixels, int diff1Y, int diff1Cb,
             else
                 *disp = 0x00;
         }
+        */
     }
     for (i = 0; i < numLines; i++)
     {
-        for (j = 0; j < (numPixels >> 1); j++)
-        {
-            disp = (Uint8 *)(dispCb + i * numPixels + j);
-            *disp = 0x80;
-        }
+        DAT_fill((void *)(dispCb + i * numPixels), numPixels, &fillVal);
+
     }
     for (i = 0; i < numLines; i++)
     {
-        for (j = 0; j < (numPixels >> 1); j++)
-        {
-            disp = (Uint8 *)(dispCr + i * numPixels + j);
-            *disp = 0x80;
-        }
+        DAT_fill((void *)(dispCr + i * numPixels), numPixels, &fillVal);
     }
 }

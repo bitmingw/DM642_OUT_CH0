@@ -11,6 +11,7 @@
 /********************************************************************/
 
 #include <csl.h>
+#include <csl_cache.h>
 #include <csl_emifa.h>
 #include <csl_i2c.h>
 #include <csl_gpio.h>
@@ -98,6 +99,17 @@ VP_Handle vpHchannel2;
 /*确定图像的参数*/
 int numPixels = 720;//每行720个像素
 int numLines  = 576;//每帧576行（PAL）
+
+/*声明缓存空间*/
+#pragma DATA_ALIGN(CACHE_A, CACHE_L2_LINESIZE)
+#pragma DATA_ALIGN(CACHE_B, CACHE_L2_LINESIZE)
+#pragma DATA_ALIGN(CACHE_S, CACHE_L2_LINESIZE)
+#pragma DATA_SECTION(CACHE_A, ".cache")
+#pragma DATA_SECTION(CACHE_B, ".cache")
+#pragma DATA_SECTION(CACHE_S, ".cache")
+Uint8 CACHE_A[720];
+Uint8 CACHE_B[720];
+Uint8 CACHE_S[720];
 
 /*缓存大小的计算 Y通道 720 * 588
 Cb 与 Cr 通道 720 * 294 */
