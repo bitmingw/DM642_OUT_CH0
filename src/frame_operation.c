@@ -214,7 +214,7 @@ void merge_diff_frame_gray(int numLines, int numPixels, int diff1Y, int diff1Cb,
     }
 }
 
-void centroid(int numLines, int numPixels, int srcY, int dstY, int * positionX, int * positionY)
+void centroid(int numLines, int numPixels, int srcY, int * positionX, int * positionY)
 {
     int i, j, count, points, sum;
     extern Uint8 CACHE_S[720];    /*Iterate for each line*/
@@ -260,4 +260,109 @@ void centroid(int numLines, int numPixels, int srcY, int dstY, int * positionX, 
         sum += CACHE_B[i] * CACHE_A[i];
     }
     *positionX = sum / points;
+}
+
+/* DEFINE line_width = 20
+ * DEFINE window_length = window_height = 100
+ */
+void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int positionY)
+{
+    int i, j;
+    int width = 20;
+    int UL_line, UL_pixel;    /* Upper left value, should be >= 20 */
+    int BR_line, BR_pixel;    /* Button right value, should be <=567 && <=699 */
+    extern Uint8 CACHE_S[720];
+    
+    UL_pixel = (positionX - 50 < 20) ? 20 : positionX - 50;
+    UL_line  = (positionY - 50 < 20) ? 20 : positionY - 50;
+    BR_pixel = (positionX + 50 > 567) ? 567 : positionY + 50;
+    BR_line  = (positionY + 50 > 699) ? 699 : positionX + 50;
+    
+    /*Up horizontal*/
+    /* odd lines */
+    for(i = UL_line - width; i < UL_line; i++)
+	{
+        DAT_copy((void *)(dstY + i * numPixels), CACHE_S, numPixels);
+        for(j = UL_pixel - width; j < BR_pixel + width; j++)
+	    {
+	    	 CACHE_S[j] = 0xFF;
+	    }
+        DAT_copy(CACHE_S, (void *)(dstY + i * numPixels), numPixels);
+	}	
+	/* even lines */
+	for(i = numLines/2 + UL_line - width; i < numLines/2 + UL_line; i++)
+	{
+        DAT_copy((void *)(dstY + i * numPixels), CACHE_S, numPixels);
+	    for(j = UL_pixel - width; j < BR_pixel + width; j++)
+	    {
+	    	 CACHE_S[j] = 0xFF;
+	    }
+        DAT_copy(CACHE_S, (void *)(dstY + i * numPixels), numPixels);
+	}
+
+	/*Button horizontal*/
+	/* odd lines */
+    for(i = BR_line; i < BR_line + width; i++)
+	{
+        DAT_copy((void *)(dstY + i * numPixels), CACHE_S, numPixels);	    
+        for(j = UL_pixel - width; j < BR_pixel + width; j++)
+	    {
+	    	 CACHE_S[j] = 0xFF;
+	    }
+        DAT_copy(CACHE_S, (void *)(dstY + i * numPixels), numPixels);
+	}
+	/* even lines */
+	for(i = numLines/2 + BR_line; i < numLines/2 + BR_line + width; i++)
+	{
+	    DAT_copy((void *)(dstY + i * numPixels), CACHE_S, numPixels);
+        for(j = UL_pixel - width; j < BR_pixel + width; j++)
+	    {
+	    	 CACHE_S[j] = 0xFF;
+	    }
+        DAT_copy(CACHE_S, (void *)(dstY + i * numPixels), numPixels);
+	}	
+	
+	/*Left vertical*/
+	/* odd lines */
+    for(i = UL_line; i < BR_line; i++)
+	{
+	    DAT_copy((void *)(dstY + i * numPixels), CACHE_S, numPixels);
+        for(j = UL_pixel - width; j < UL_pixel; j++)
+	    {
+	    	 CACHE_S[j] = 0xFF;
+	    }
+        DAT_copy(CACHE_S, (void *)(dstY + i * numPixels), numPixels);
+	}
+	/* even lines */
+	for(i = numLines/2 + UL_line; i < numLines/2 + BR_line; i++)
+	{
+	    DAT_copy((void *)(dstY + i * numPixels), CACHE_S, numPixels);
+        for(j = UL_pixel - width; j < UL_pixel; j++)
+	    {
+	    	 CACHE_S[j] = 0xFF;
+	    }
+        DAT_copy(CACHE_S, (void *)(dstY + i * numPixels), numPixels);
+	}
+	
+	/*Right vertical*/
+	/* odd lines */
+    for(i = UL_line; i < BR_line; i++)
+	{
+	    DAT_copy((void *)(dstY + i * numPixels), CACHE_S, numPixels);
+        for(j = BR_pixel; j<BR_pixel + width; j++)
+	    {
+	    	 CACHE_S[j] = 0xFF;
+	    }
+        DAT_copy(CACHE_S, (void *)(dstY + i * numPixels), numPixels);
+	}
+	/* even lines */
+    for(i = numLines/2 + UL_line; i < numLines/2 + BR_line; i++)
+	{
+	    DAT_copy((void *)(dstY + i * numPixels), CACHE_S, numPixels);
+        for(j = BR_pixel; j < BR_pixel + width; j++)
+	    {
+	    	 CACHE_S[j] = 0xFF;
+	    }
+        DAT_copy(CACHE_S, (void *)(dstY + i * numPixels), numPixels);
+	}    
 }

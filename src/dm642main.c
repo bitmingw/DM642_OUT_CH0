@@ -226,6 +226,9 @@ void main()
     Uint32 YAddBuf, CbAddBuf, CrAddBuf;
     /* Buf addr to store results */
     Uint32 YAnsBuf, CbAnsBuf, CrAnsBuf;
+    
+    /* Position of centroid */
+    int positionX, positionY;
 
 /*-------------------------------------------------------*/
 /* perform all initializations                           */
@@ -396,8 +399,11 @@ void main()
     YBuf = YbufferDiff12;   YAddBuf = YbufferDiff23;
     CbBuf = CbbufferDiff12; CbAddBuf = CbbufferDiff23;
     CrBuf = CrbufferDiff12; CrAddBuf = CrbufferDiff23;
-    merge_diff_frame_gray(numLines, numPixels, YBuf, CbBuf, CrBuf, YAddBuf, CbAddBuf, CrAddBuf, \
-        disYbuffer, disCbbuffer, disCrbuffer);
+    merge_diff_frame_gray(numLines, numPixels, YBuf, CbBuf, CrBuf, YAddBuf, CbAddBuf, CrAddBuf,
+        YbufferPost, disCbbuffer, disCrbuffer);
+    centroid(numLines, numPixels, YbufferPost, &positionX, &positionY);
+    draw_rectangle(numLines, numPixels, YbufferPost, positionX, positionY);
+    send_frame_gray(numLines, numPixels, YbufferPost, disYbuffer);
 
 	/*Æô¶¯ÏÔÊ¾Ä£¿é*/
 	bt656_display_start(vpHchannel0);
@@ -485,8 +491,11 @@ void main()
             YBuf = YbufferDiff12;   YAddBuf = YbufferDiff23;
             CbBuf = CbbufferDiff12; CbAddBuf = CbbufferDiff23;
             CrBuf = CrbufferDiff12; CrAddBuf = CrbufferDiff23;
-            merge_diff_frame_gray(numLines, numPixels, YBuf, CbBuf, CrBuf, YAddBuf, CbAddBuf, CrAddBuf, \
-                disYbuffer, disCbbuffer, disCrbuffer);
+            merge_diff_frame_gray(numLines, numPixels, YBuf, CbBuf, CrBuf, YAddBuf, CbAddBuf, CrAddBuf,
+                YbufferPost, disCbbuffer, disCrbuffer);
+            centroid(numLines, numPixels, YbufferPost, &positionX, &positionY);
+            draw_rectangle(numLines, numPixels, YbufferPost, positionX, positionY);
+            send_frame_gray(numLines, numPixels, YbufferPost, disYbuffer);
 		}
 	}
 }

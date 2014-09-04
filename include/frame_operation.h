@@ -44,6 +44,11 @@ void merge_diff_frame_gray(int numLines, int numPixels, int diff1Y, int diff1Cb,
  * Update two int numbers, the X position (numPixels) and Y position (numLines).
  * Use call by reference to update two values.
  */
-void centroid(int numLines, int numPixels, int srcY, int dstY, int * positionX, int * positionY);
+void centroid(int numLines, int numPixels, int srcY, int * positionX, int * positionY);
+
+/* Draw a white rectangle in the currect frame.
+ * The size of rectangle and line width are determined by the function itself.
+ */
+void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int positionY);
 
 #endif /*_H_FRAME_OPERATION*/
