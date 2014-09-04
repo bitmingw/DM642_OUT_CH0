@@ -39,4 +39,11 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
 void merge_diff_frame_gray(int numLines, int numPixels, int diff1Y, int diff1Cb, int diff1Cr, \
     int diff2Y, int diff2Cb, int diff2Cr, int dispY, int dispCb, int dispCr);
 
+
+/* Calculate centroid of white points in the frame.
+ * Update two int numbers, the X position (numPixels) and Y position (numLines).
+ * Use call by reference to update two values.
+ */
+void centroid(int numLines, int numPixels, int srcY, int dstY, int * positionX, int * positionY);
+
 #endif /*_H_FRAME_OPERATION*/

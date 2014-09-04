@@ -213,3 +213,51 @@ void merge_diff_frame_gray(int numLines, int numPixels, int diff1Y, int diff1Cb,
         DAT_fill((void *)(dispCr + i * numPixels), numPixels, &fillVal);
     }
 }
+
+void centroid(int numLines, int numPixels, int srcY, int dstY, int * positionX, int * positionY)
+{
+    int i, j, count, points, sum;
+    extern Uint8 CACHE_S[720];    /*Iterate for each line*/
+    extern Uint8 CACHE_A[720];    /*Store the count of each line. 588 used.*/
+    extern Uint8 CACHE_B[720];    /*Store the mid white point of x-axis. 588 used.*/
+
+    for (i = 0; i < numLines; i++)
+    {
+        DAT_copy((void *)(srcY + i * numPixels),
+                 CACHE_S, numPixels);
+        /*Count the number of white points in this line.*/
+        count = 0;
+        for (j = 0; j < numPixels; j++)
+        {
+            if (CACHE_S[j] == 0xFF)
+                count++;
+        }
+        CACHE_A[i] = count;
+        /*Find the mid of white points*/
+        points = count / 2;
+        count = 0;
+        for (j = 0; j < numPixels; j++)
+        {
+            if (CACHE_S[j] == 0xFF)
+                count++;
+            if (count == points)
+            {
+                CACHE_B[i] = j;
+                break;
+            }
+        }
+    }
+
+    /* Calculate the position */
+    points = 0;    sum = 0;
+    for (i = 0; i < numLines; i++)
+    {
+        points += CACHE_A[i];
+    }
+    *positionY = points / numLines;
+    for (i = 0; i < numLines; i++)
+    {
+        sum += CACHE_B[i] * CACHE_A[i];
+    }
+    *positionX = sum / points;
+}
