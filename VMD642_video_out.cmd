@@ -15,6 +15,7 @@ MEMORY
   BUF3: o = 80300000h l = 00100000h /* external memory, 1MB  */
   DF12: o = 80400000h l = 00100000h /* external memory, 1MB  */
   DF23: o = 80500000h l = 00100000h /* external memroy, 1MB  */
+  POST: o = 80600000h l = 00100000h /* external memory, 1MB  */
   VOUT: o = 81000000h l = 00f00000h /* external memory, 15MB */
 }
 
@@ -52,7 +53,10 @@ SECTIONS
     .ChaACrSpaceDiff12> DF12
     .ChaAYSpaceDiff23 > DF23
     .ChaACbSpaceDiff23> DF23
-    .ChaACrSpaceDiff23> DF23    
+    .ChaACrSpaceDiff23> DF23
+    .ChaAYSpacePost   > POST
+    .ChaACbSpacePost  > POST
+    .ChaACrSpacePost  > POST
 
     .disChaAYSpace >    VOUT
     .disChaACbSpace >   VOUT

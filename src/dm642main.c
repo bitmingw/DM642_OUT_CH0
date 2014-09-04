@@ -182,6 +182,18 @@ Uint32 YbufferDiff23  = 0x80500000;
 Uint32 CbbufferDiff23 = 0x805675c0;
 Uint32 CrbufferDiff23 = 0x8059b0a0;
 
+/*分配空间，后处理图像首地址*/
+#pragma DATA_SECTION(ChaAYSpacePost, ".ChaAYSpacePost")
+Uint8 ChaAYSpacePost[720*588];
+#pragma DATA_SECTION(ChaACbSpacePost, ".ChaACbSpacePost")
+Uint8 ChaACbSpacePost[360*588];
+#pragma DATA_SECTION(ChaACrSpacePost, ".ChaACrSpacePost")
+Uint8 ChaACrSpacePost[360*588];
+
+Uint32 YbufferPost  = 0x80600000;
+Uint32 CbbufferPost = 0x806675c0;
+Uint32 CrbufferPost = 0x8069b0a0;
+
 /*显示图像首地址，空间已在 vportdis.c 中分配*/
 Uint32 disYbuffer  = 0x81000000;
 Uint32 disCbbuffer = 0x810675c0;
