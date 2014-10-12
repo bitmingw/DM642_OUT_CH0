@@ -140,7 +140,6 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
 void gen_diff_frame_gray(int numLines, int numPixels, int Y, int subY, int dstY)
 {
     int i, j;
-    Uint8 sub, sub2;
     extern Uint8 CACHE_A[720];
     extern Uint8 CACHE_B[720];
     extern Uint8 CACHE_S[720];
@@ -157,9 +156,7 @@ void gen_diff_frame_gray(int numLines, int numPixels, int Y, int subY, int dstY)
                  CACHE_B, numPixels);
         for (j = 0; j < numPixels; j++)
         {
-            sub = CACHE_A[j] & 0x80;    /*MSB of byte*/
-            sub2 = CACHE_B[j] & 0x80;    /*MSB of byte*/
-            CACHE_S[j] = (sub ^ sub2) ? 0xFF : 0x00;
+            CACHE_S[j] = ((CACHE_A[j] ^ CACHE_B[j]) & 0x80) ? 0xFF : 0x00;
         }
         DAT_copy(CACHE_S,
                  (void *)(dstY + i * numPixels), numPixels);
@@ -190,18 +187,6 @@ void merge_diff_frame_gray(int numLines, int numPixels, int diff1Y, int diff1Cb,
         }
         DAT_copy(CACHE_S,
                  (void *)(dispY + i * numPixels), numPixels);
-        /*
-        for (j = 0; j < numPixels; j++)
-        {
-            sub  = (Uint8 *)(diff1Y + i * numPixels + j);
-            sub2 = (Uint8 *)(diff2Y + i * numPixels + j);
-            disp = (Uint8 *)(dispY + i * numPixels + j);
-            if (*sub & *sub2)
-                *disp = 0xFF;
-            else
-                *disp = 0x00;
-        }
-        */
     }
     for (i = 0; i < numLines; i++)
     {
