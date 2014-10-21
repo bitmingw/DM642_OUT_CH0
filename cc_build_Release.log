@@ -1,0 +1,29 @@
+----------------------  VMD642_video_out0.pjt - Release  ----------------------
+[_sa7121h.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -q -o3 -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Release" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"CHIP_DM642" -mv6400 -@"../Release.lkf" "_sa7121h.c"
+
+[_tvp51xx.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -q -o3 -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Release" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"CHIP_DM642" -mv6400 -@"../Release.lkf" "_tvp51xx.c"
+
+[dm642main.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -q -o3 -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Release" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"CHIP_DM642" -mv6400 -@"../Release.lkf" "dm642main.c"
+"dm642main.c", line 212: warning: variable "CbSubBuf" was set but never used
+"dm642main.c", line 212: warning: variable "CrSubBuf" was set but never used
+"dm642main.c", line 216: warning: variable "CbAnsBuf" was set but never used
+"dm642main.c", line 216: warning: variable "CrAnsBuf" was set but never used
+
+[frame_operation.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -q -o3 -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Release" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"CHIP_DM642" -mv6400 -@"../Release.lkf" "frame_operation.c"
+
+[iic.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -q -o3 -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Release" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"CHIP_DM642" -mv6400 -@"../Release.lkf" "iic.c"
+
+[ves_dm642.asm] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -q -o3 -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Release" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"CHIP_DM642" -mv6400 -@"../Release.lkf" "ves_dm642.asm"
+
+[vportcap.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -q -o3 -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Release" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"CHIP_DM642" -mv6400 -@"../Release.lkf" "vportcap.c"
+
+[vportdis.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -q -o3 -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Release" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"CHIP_DM642" -mv6400 -@"../Release.lkf" "vportdis.c"
+
+[Linking...] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -@"Release.lkf"
+<Linking>
+>> warning: creating .stack section with default size of 400 (hex) words.
+   Use
+            -stack option to change the default size.
+
+Build Complete,
+  0 Errors, 5 Warnings, 0 Remarks.
