@@ -51,4 +51,9 @@ void centroid(int numLines, int numPixels, int srcY, int * positionX, int * posi
  */
 void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int positionY);
 
+/* Calculate histogram of two axes of image.
+ * Update two preallocated arrays to store the values.
+ */
+ void histograms(int numLines, int numPixels, int srcY);
+
 #endif /*_H_FRAME_OPERATION*/

@@ -351,3 +351,32 @@ void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int po
         DAT_copy(CACHE_S, (void *)(dstY + i * numPixels), numPixels);
 	}    
 }
+
+void histograms(int numLines, int numPixels, int srcY)
+{
+    int i, j;
+    Uint32 fillVal = 0x00000000;  /*32bit value to fill 0 to space*/
+    extern Uint32 HIST_X[720];    /*Store the histogram on X axis*/
+    extern Uint32 HIST_Y[588];    /*Store the histogram on Y axis*/
+    extern Uint8 CACHE_S[720];    /*Iterate for each line*/
+    
+    /* Clear the former histogram info */
+    DAT_fill(HIST_X, numPixels, &fillVal);
+    DAT_fill(HIST_Y, numLines, &fillVal);
+    
+    for (i = 0; i < numLines; i++)
+    {
+        DAT_copy((void *)(srcY + i * numPixels),
+                 CACHE_S, numPixels);
+        /* Contribute to X and Y axis when a white point is found. */
+        for (j = 0; j < numPixels; j++)
+        {
+            if (CACHE_S[j] == 0xFF)
+            {
+                HIST_X[j]++;
+                HIST_Y[i]++;
+            }
+        }
+    }
+}
+

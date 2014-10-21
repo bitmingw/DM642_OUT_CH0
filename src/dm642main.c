@@ -111,6 +111,14 @@ Uint8 CACHE_A[720];
 Uint8 CACHE_B[720];
 Uint8 CACHE_S[720];
 
+/*声明直方图存储空间*/
+#pragma DATA_ALIGN(HIST_X, CACHE_L2_LINESIZE)
+#pragma DATA_ALIGN(HIST_Y, CACHE_L2_LINESIZE)
+#pragma DATA_SECTION(HIST_X, ".bss")
+#pragma DATA_SECTION(HIST_Y, ".bss")
+Uint32 HIST_X[720];
+Uint32 HIST_Y[588];
+
 /*缓存大小的计算 Y通道 720 * 588
 Cb 与 Cr 通道 720 * 294 */
 
@@ -228,7 +236,9 @@ void main()
     Uint32 YAnsBuf, CbAnsBuf, CrAnsBuf;
     
     /* Position of centroid */
+    /*
     int positionX, positionY;
+    */
 
 /*-------------------------------------------------------*/
 /* perform all initializations                           */
@@ -401,8 +411,11 @@ void main()
     CrBuf = CrbufferDiff12; CrAddBuf = CrbufferDiff23;
     merge_diff_frame_gray(numLines, numPixels, YBuf, CbBuf, CrBuf, YAddBuf, CbAddBuf, CrAddBuf,
         YbufferPost, disCbbuffer, disCrbuffer);
+    /*
     centroid(numLines, numPixels, YbufferPost, &positionX, &positionY);
     draw_rectangle(numLines, numPixels, YbufferPost, positionX, positionY);
+    */
+    histograms(numLines, numPixels, YbufferPost);
     send_frame_gray(numLines, numPixels, YbufferPost, disYbuffer);
 
 	/*启动显示模块*/
@@ -493,8 +506,11 @@ void main()
             CrBuf = CrbufferDiff12; CrAddBuf = CrbufferDiff23;
             merge_diff_frame_gray(numLines, numPixels, YBuf, CbBuf, CrBuf, YAddBuf, CbAddBuf, CrAddBuf,
                 YbufferPost, disCbbuffer, disCrbuffer);
+            /*
             centroid(numLines, numPixels, YbufferPost, &positionX, &positionY);
             draw_rectangle(numLines, numPixels, YbufferPost, positionX, positionY);
+            */
+            histograms(numLines, numPixels, YbufferPost);
             send_frame_gray(numLines, numPixels, YbufferPost, disYbuffer);
 		}
 	}
