@@ -380,3 +380,104 @@ void histograms(int numLines, int numPixels, int srcY)
     }
 }
 
+void hist_analysis(int numLines, int numPixels, int * positionX, int * positionY, int * rangeX, int * rangeY)
+{
+    int i;
+    Uint32 peakValX, peakValY;              /* The max values on histogram */
+    int peakPositionX, peakPositionY;       /* The index of point with highest density of histogram */
+    Uint32 edgeValX, edgeValY;                 /* The edge (half) value on histogram */
+    Uint32 x1, x2, y1, y2;                     /* The range of object */
+    extern Uint32 thresholdX, thresholdY;   /* The external threshold value of histogram to detect a object */
+    extern Uint32 HIST_X[720];              /* The histogram on X axis */
+    extern Uint32 HIST_Y[588];              /* The histogram on Y axis */
+    
+    /* Calculate on X axis */
+    peakValX = 0;
+    for (i = 0; i < 720; i++)
+    {
+        if (HIST_X[i] > peakValX) 
+        {
+            peakValX = HIST_X[i];
+            peakPositionX = i;
+        }
+    }
+    
+    /* Calculate on Y axis */
+    peakValY = 0;
+    for (i = 0; i < 588; i++)
+    {
+        if (HIST_Y[i] > peakValY)
+        {
+            peakValY = HIST_Y[i];
+            peakPositionY = i;
+        }
+    }
+    
+    /* Check if thresholds are met - there is a moving object */
+    
+    /* No object detected */
+    if (peakValX < thresholdX || peakValY < thresholdY)
+    {
+        *positionX = peakPositionX;
+        *positionY = peakPositionY;
+        *rangeX = 0;
+        *rangeY = 0;
+        return;
+    }
+    /* Find the range of the object */
+    else
+    {
+        edgeValX = peakValX >> 1;
+        edgeValY = peakValY >> 1;
+        
+        /* Search in X axis near the peak point */
+        for (i = peakPositionX; i >= 0; i--)
+        {
+            if (HIST_X[i] < edgeValX)
+            {
+                x1 = i;
+                break;
+            }
+            x1 = 0;             /* else */
+        }
+        for (i = peakPositionX; i < numPixels; i++)
+        {
+            if (HIST_X[i] < edgeValX)
+            {
+                x2 = i;
+                break;
+            }
+            x2 = numPixels;     /* else */
+        }
+        /* Search in Y axis near the peak point */
+        for (i = peakPositionY; i >= 0; i--)
+        {
+            if (HIST_Y[i] < edgeValY)
+            {
+                y1 = i;
+                break;
+            }
+            y1 = 0;             /* else */
+        }
+        for (i = peakPositionY; i < numLines; i++)
+        {
+            if (HIST_Y[i] < edgeValY)
+            {
+                y2 = i;
+                break;
+            }
+            y2 = numLines;     /* else */
+        }
+        
+        /* Recalculate the peak position via this range */
+        peakPositionX = (x1 + x2) >> 1;
+        peakPositionY = (y1 + y2) >> 1;
+        
+        /* Return the values via reference */
+        *positionX = peakPositionX;
+        *positionY = peakPositionY;
+        *rangeX = (x2 - x1) >> 1;
+        *rangeY = (y2 - y1) >> 1;
+        return;
+    }
+}

@@ -55,5 +55,12 @@ void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int po
  * Update two preallocated arrays to store the values.
  */
  void histograms(int numLines, int numPixels, int srcY);
+ 
+ /* Local the moving object in the screen based on two sided external histogram of the image.
+  * Update three numbers: the position and range of the object
+  * External threshold is checked to determine if there is no object in the screen.
+  * The boundary of object is defined as the half of the peak value.
+  */
+ void hist_analysis(int numLines, int numPixels, int * positionX, int * positionY, int * rangeX, int * rangeY);
 
 #endif /*_H_FRAME_OPERATION*/

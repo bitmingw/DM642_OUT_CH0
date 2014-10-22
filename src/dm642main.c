@@ -100,6 +100,10 @@ VP_Handle vpHchannel2;
 int numPixels = 720;//每行720个像素
 int numLines  = 576;//每帧576行（PAL）
 
+/*运动目标的直方图强度阈值*/
+Uint32 thresholdX = 36;
+Uint32 thresholdY = 28;
+
 /*声明缓存空间*/
 #pragma DATA_ALIGN(CACHE_A, CACHE_L2_LINESIZE)
 #pragma DATA_ALIGN(CACHE_B, CACHE_L2_LINESIZE)
@@ -235,10 +239,9 @@ void main()
     /* Buf addr to store results */
     Uint32 YAnsBuf, CbAnsBuf, CrAnsBuf;
     
-    /* Position of centroid */
-    /*
+    /* Position of moving object */
     int positionX, positionY;
-    */
+    int rangeX, rangeY;
 
 /*-------------------------------------------------------*/
 /* perform all initializations                           */
