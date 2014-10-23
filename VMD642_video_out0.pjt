@@ -12,8 +12,8 @@ Config="Debug"
 Config="Release"
 
 [Source Files]
-Source="lib\cslDM642.lib"
-Source="lib\rts6400.lib"
+Source="..\..\..\..\CCStudio_v3.3\boards\evmdm642\csl\lib\cslDM642.lib"
+Source="..\..\..\..\CCStudio_v3.3\C6000\cgtools\lib\rts6400.lib"
 Source="src\_sa7121h.c"
 Source="src\_tvp51xx.c"
 Source="src\dm642main.c"

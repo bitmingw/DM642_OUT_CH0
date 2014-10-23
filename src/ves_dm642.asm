@@ -26,7 +26,7 @@
    .global _VPCapChaAIsr
    .global _VPDispIsr   
    .global _vector13   
-   .global _vector14   
+   .global _MovingCtrl   
    .global _vector15   
 
 *------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ _vector10:  VEC_ENTRY _vec_dummy
 _vector11:  VEC_ENTRY _VPCapChaAIsr 
 _vector12:  VEC_ENTRY _VPDispIsr   
 _vector13:  VEC_ENTRY _vec_dummy
-_vector14:  VEC_ENTRY _vec_dummy
+_vector14:  VEC_ENTRY _MovingCtrl
 _vector15:  VEC_ENTRY _vec_dummy
 
 *------------------------------------------------------------------------------

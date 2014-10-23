@@ -18,12 +18,19 @@
 #include <csl_irq.h>
 #include <csl_chip.h>
 #include <csl_dat.h>
+#include <csl_timer.h>
+
 #include "iic.h"
 #include "vportcap.h"
 #include "vportdis.h"
 #include "sa7121h.h"
 #include "TVP51xx.h"
+#include "vmd642.h"
+#include "vmd642_uart.h"
 #include "frame_operation.h"
+//#include "ctrl_operation.h"
+
+interrupt void MovingCtrl(void);
 
 /********************************************************************/
 
@@ -517,4 +524,9 @@ void main()
             send_frame_gray(numLines, numPixels, YbufferPost, disYbuffer);
 		}
 	}
+}
+
+interrupt void MovingCtrl(void)
+{
+
 }
