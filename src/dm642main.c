@@ -83,6 +83,22 @@ CHIP_Config VMD642percfg = {
 	CHIP_I2C
 };
 
+/* Config VMD642 UART Communication */
+VMD642_UART_Config g_uartConfig ={
+	   0x00,/*寄存器IER,关所有中断*/
+	   0x57,/*寄存器FCR,队列初始化*/
+	   0x03,/*寄存器LCR,字长=8bit*/
+	   0x01,/*寄存器MCR,控制RTS输出*/
+};
+
+/* Config Timer0 */
+TIMER_Config timerConfig = {
+    0x00000280, /* interal clock, reset counter and hold */
+    0x007270E0, /* interrupt every 0.1s */
+    0x00000000  /* start from 0 */
+};
+
+/* Config I2C handler and address */
 I2C_Handle hVMD642I2C;
 int portNumber;
 extern SA7121H_ConfParams sa7121hPAL[45];
@@ -90,16 +106,26 @@ extern SA7121H_ConfParams sa7121hNTSC[45];
 Uint8 vFromat = 0;
 Uint8 misc_ctrl = 0x6D;
 Uint8 output_format = 0x47;
-// 地址为0 for cvbs port1,选择复合信号做为输入
+/*地址为0 for cvbs port1,选择复合信号做为输入*/
 Uint8 input_sel = 0x00;
 /*地址为0xf，将Pin27设置成为CAPEN功能*/
 Uint8 pin_cfg = 0x02;
 /*地址为1B*/
 Uint8 chro_ctrl_2 = 0x14;
+
 /*图像句柄的声明*/
 VP_Handle vpHchannel0;
 VP_Handle vpHchannel1;
 VP_Handle vpHchannel2;
+
+/* Config UART handler */
+Uint8 g_ioBuf;
+Uint16 g_uartBuf;
+VMD642_UART_Handle g_uartHandleA;
+
+/* Config Timer handler */
+TIMER_Handle hTimer;
+Uint32 TimerEventId;
 
 /********************************************************************/
 
@@ -260,6 +286,13 @@ void main()
 	/*EMIFA的初始化，将CE0设为SDRAM空间，CE1设为异步空间
 	 注，DM642支持的是EMIFA，而非EMIF*/
 	EMIFA_config(&VMDEMIFConfig);
+    
+/*----------------------------------------------------------*/
+    /*TIMER初始化，设置TIMER0*/
+    hTimer = TIMER_open(TIMER_DEV0, 0);
+    TimerEventId = TIMER_getEventId(hTimer);
+    TIMER_config(hTimer, &timerConfig);
+    
 /*----------------------------------------------------------*/
 	/*中断向量表的初始化*/
 	//Point to the IRQ vector table
@@ -268,11 +301,22 @@ void main()
     IRQ_globalEnable();
     IRQ_map(IRQ_EVT_VINT1, 11);
     IRQ_map(IRQ_EVT_VINT0, 12);
+    IRQ_map(TimerEventId, 14);
     IRQ_reset(IRQ_EVT_VINT1);
     IRQ_reset(IRQ_EVT_VINT0);
+    IRQ_reset(TimerEventId);
+    IRQ_enable(TimerEventId);   /* Enable timer interrupt */
+    
     /*打开一个数据拷贝的数据通路*/
     DAT_open(DAT_CHAANY, DAT_PRI_LOW, DAT_OPEN_2D);
 
+/*----------------------------------------------------------*/
+/*打开RS485输出信号通路*/
+    /* Open UART */
+    g_uartHandleA = VMD642_UART_open(VMD642_UARTB,
+    									UARTHW_VMD642_BAUD_9600,
+    									&g_uartConfig);
+    
 /*----------------------------------------------------------*/
 	/*进行IIC的初始化*/
 	hVMD642I2C = I2C_open(I2C_PORT0, I2C_OPEN_RESET);
@@ -371,6 +415,9 @@ void main()
 /*----------------------------------------------------------*/
 	/*启动采集模块*/
 	bt656_capture_start(vpHchannel1);
+    
+    /*开启定时器*/
+    TIMER_start(hTimer);
 
 	/*第一次运行，采集三帧数据*/
 	for (nextFrame = 1; nextFrame <= 3; nextFrame++)

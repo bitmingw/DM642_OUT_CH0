@@ -4,20 +4,24 @@
 [_tvp51xx.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "_tvp51xx.c"
 
 [dm642main.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "dm642main.c"
-"dm642main.c", line 243: warning: variable "CbSubBuf" was set but never used
-"dm642main.c", line 243: warning: variable "CrSubBuf" was set but never used
-"dm642main.c", line 247: warning: variable "CbAnsBuf" was set but never used
-"dm642main.c", line 247: warning: variable "CrAnsBuf" was set but never used
-"dm642main.c", line 250: warning: variable "positionX" was declared but never referenced
-"dm642main.c", line 250: warning: variable "positionY" was declared but never referenced
-"dm642main.c", line 251: warning: variable "rangeX" was declared but never referenced
-"dm642main.c", line 251: warning: variable "rangeY" was declared but never referenced
+"dm642main.c", line 269: warning: variable "CbSubBuf" was set but never used
+"dm642main.c", line 269: warning: variable "CrSubBuf" was set but never used
+"dm642main.c", line 273: warning: variable "CbAnsBuf" was set but never used
+"dm642main.c", line 273: warning: variable "CrAnsBuf" was set but never used
+"dm642main.c", line 276: warning: variable "positionX" was declared but never referenced
+"dm642main.c", line 276: warning: variable "positionY" was declared but never referenced
+"dm642main.c", line 277: warning: variable "rangeX" was declared but never referenced
+"dm642main.c", line 277: warning: variable "rangeY" was declared but never referenced
 
 [frame_operation.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "frame_operation.c"
 
 [iic.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "iic.c"
 
 [ves_dm642.asm] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "ves_dm642.asm"
+
+[vmd642_cpld.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "vmd642_cpld.c"
+
+[vmd642_uart.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "vmd642_uart.c"
 
 [vportcap.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "vportcap.c"
 
