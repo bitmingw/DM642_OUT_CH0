@@ -1,6 +1,7 @@
 -z -q -c -m"./Debug/VMD642_video_out1.map" -o"./Debug/VMD642_video_out1.out" -stack0x400 -w -x -i"C:/CCStudio_v3.3/C6000/csl/lib" -i"C:/CCStudio_v3.3/C6000/xdais/lib" -i"C:/CCStudio_v3.3/bios_5_31_02/packages/ti/bios/lib" -i"C:/CCStudio_v3.3/bios_5_31_02/packages/ti/rtdx/lib/c6000" -i"C:/CCStudio_v3.3/C6000/cgtools/lib"
 "C:\Documents and Settings\Administrator\My Documents\DM642_OUT_CH0\Debug\_sa7121h.obj"
 "C:\Documents and Settings\Administrator\My Documents\DM642_OUT_CH0\Debug\_tvp51xx.obj"
+"C:\Documents and Settings\Administrator\My Documents\DM642_OUT_CH0\Debug\ctrl_operation.obj"
 "C:\Documents and Settings\Administrator\My Documents\DM642_OUT_CH0\Debug\dm642main.obj"
 "C:\Documents and Settings\Administrator\My Documents\DM642_OUT_CH0\Debug\frame_operation.obj"
 "C:\Documents and Settings\Administrator\My Documents\DM642_OUT_CH0\Debug\iic.obj"

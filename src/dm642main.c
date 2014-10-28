@@ -28,7 +28,7 @@
 #include "vmd642.h"
 #include "vmd642_uart.h"
 #include "frame_operation.h"
-//#include "ctrl_operation.h"
+#include "ctrl_operation.h"
 
 interrupt void MovingCtrl(void);
 
