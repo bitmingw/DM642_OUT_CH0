@@ -4,10 +4,6 @@
 [_tvp51xx.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "_tvp51xx.c"
 
 [ctrl_operation.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "ctrl_operation.c"
-"ctrl_operation.c", line 37: warning: variable "F" was set but never used
-"ctrl_operation.c", line 40: warning: variable "B" was set but never used
-"ctrl_operation.c", line 43: warning: variable "noise_mag" was declared but never referenced
-"ctrl_operation.c", line 46: warning: variable "Qt" was declared but never referenced
 
 [dm642main.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "dm642main.c"
 "dm642main.c", line 269: warning: variable "CbSubBuf" was set but never used
@@ -37,4 +33,4 @@
 <Linking>
 
 Build Complete,
-  0 Errors, 12 Warnings, 0 Remarks.
+  0 Errors, 8 Warnings, 0 Remarks.

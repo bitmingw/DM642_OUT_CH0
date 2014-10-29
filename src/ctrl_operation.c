@@ -11,7 +11,7 @@
 
 #include "ctrl_operation.h"
 
-
+#if 0
 void kalman_filter(double * stat_pre[], double * input[], double * noise[], double * stat_esti)
 {
     /*************************************************************************/
@@ -28,23 +28,43 @@ void kalman_filter(double * stat_pre[], double * input[], double * noise[], doub
     /* X_post = X_predict + K * y */ /* Update state estimate */
     /* P_post = (I - K * H) * P_predict */ /* Update estimate covariance */
     
+    /* Where */
     /* Q = B * B.transpose * var_of_u */
+    /* z = H * X_measure + v */
+    /* R = v * v.transpose * var_of_m */
     
+    /*************************************************************************/
     /* Define a series of variables */
     double dt = 0.1;     /* Minimal time unit */
-
+    
+    /* The former state vector */
+    extern Matrix41 X_pre;
+    
+    /* Predict state vector */
+    extern Matrix41 X_predict;
+    
     /* The state transition matrix F */
     Matrix44 F;
 
-    /* The control input matrix B, give velocity rather than acceleration */
+    /* The control input matrix B, give velocity (not acceleration) */
     Matrix41 B;
+    
+    /* The input value */
+    extern double u;
+    
+    /* The former estimate covariance */
+    extern Matrix44 P_pre;
 
-    /* The noise ratio of the state */
+    /* The noise ratio of control input */
     double noise_mag;
 
-    /* The noise matrix of control inputs */
-    Matrix44 Qt;
+    /* The noise matrix of control input */
+    Matrix44 Q;
 
+    /*************************************************************************/
+    
+    
+    
     /*************************************************************************/
     /* Initialize these variables */
 
@@ -55,9 +75,16 @@ void kalman_filter(double * stat_pre[], double * input[], double * noise[], doub
 
     B.array[0][0] = dt; B.array[1][0] = 0;  B.array[2][0] = 1;  F.array[3][0] = 0;
 
+    Q.array[0][0] = 1;  Q.array[0][1] = 0;  Q.array[0][2] = dt; Q.array[0][3] = 0;
+    Q.array[1][0] = 0;  Q.array[1][1] = 1;  Q.array[1][2] = 0;  Q.array[1][3] = dt;
+    Q.array[2][0] = 0;  Q.array[2][1] = 0;  Q.array[2][2] = 1;  Q.array[2][3] = 0;
+    Q.array[3][0] = 0;  Q.array[3][1] = 0;  Q.array[3][2] = 0;  Q.array[3][3] = 1;
     /* Predict the next state with the last state and predicted input */
 
 }
+#endif
+
+/*****************************************************************************/
 
 Matrix44 matrix_multiply_44(Matrix44 A, Matrix44 B)
 {
@@ -124,6 +151,76 @@ Matrix44 matrix_trans_44(Matrix44 A)
     }
     return Ap;
 }
+
+/*****************************************************************************/
+
+Matrix22 matrix_multiply_22(Matrix22 A, Matrix22 B)
+{
+    Matrix22 C;
+    int i, j, k;
+    /* Clear the values in C */
+    for (i = 0; i < 2; i++) {
+        for (j = 0; j < 2; j++) {
+            C.array[i][j] = 0.0;
+            for (k = 0; k < 2; k++) {
+                C.array[i][j] += A.array[i][k] * B.array[k][j];
+            }
+        }
+    }
+    return C;
+}
+
+Matrix21 matrix_multiply_21(Matrix22 A, Matrix21 B)
+{
+    Matrix21 C;
+    int i, j;
+
+    /* Clear the values in C */
+    for (i = 0; i < 2; i++) {
+        C.array[i][0] = 0.0;
+    }
+    for (i = 0; i < 2; i++) {
+        for (j = 0; j < 2; j++) {
+            C.array[i][0] += A.array[i][j] * B.array[j][0];
+        }
+    }
+    return C;
+}
+
+Matrix22 scalar_multiply_22(Matrix22 A, double n)
+{
+    int i, j;
+    for (i = 0; i < 2; i++) {
+        for (j = 0; j < 2; j++) {
+            A.array[i][j] *= n;
+        }
+    }
+    return A;
+}
+
+Matrix21 scalar_multiply_21(Matrix21 B, double n)
+{
+    int i;
+    for (i = 0; i < 2; i++) {
+        B.array[i][0] *= n;
+    }
+    return B;
+}
+
+Matrix22 matrix_trans_22(Matrix22 A)
+{
+    Matrix22 Ap;
+    int i, j;
+
+    for (i = 0; i < 2; i++) {
+        for (j = 0; j < 2; j++) {
+            Ap.array[i][j] = A.array[j][i];
+        }
+    }
+    return Ap;
+}
+
+/*****************************************************************************/
 
 double determinant(Matrix44 A, int k)
 {
@@ -197,7 +294,7 @@ Matrix44 adjugate(Matrix44 A, int k)
     return matrix_trans_44(fac);
 }
 
-Matrix44 inverse(Matrix44 A)
+Matrix44 inverse4(Matrix44 A)
 {
     double det;
     Matrix44 adj;
@@ -205,4 +302,14 @@ Matrix44 inverse(Matrix44 A)
     det = determinant(A, 4);
     adj = adjugate(A, 4);
     return scalar_multiply_44(adj, 1 / det);
+}
+
+Matrix22 inverse2(Matrix22 A)
+{
+    Matrix22 inv;
+    inv.array[0][0] = A.array[1][1];
+    inv.array[0][1] = -A.array[0][1];
+    inv.array[1][0] = -A.array[1][0];
+    inv.array[1][1] = A.array[0][0];
+    return scalar_multiply_22(inv, (A.array[0][0] * A.array[1][1] - A.array[0][1] * A.array[1][0]));
 }

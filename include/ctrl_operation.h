@@ -15,6 +15,15 @@ typedef struct matrix44 {
     double array[4][4];
 } Matrix44;
 
+typedef struct matrix21 {
+    double array[2][1];
+} Matrix21;
+
+typedef struct matrix22 {
+    double array[2][2];
+} Matrix22;
+
+/*****************************************************************************/
 
  /* Kalman filter function.
   * Read the previous state vector, current measurement and noise.
@@ -23,7 +32,9 @@ typedef struct matrix44 {
   * The input / control vector is defined as input = [velocityX, 0, 0, 0], unit = pix / s
   * The output vector is defined as output = [positionX, positionY, velocityX, velocityY], unit = pix
   */
-void kalman_filter();
+//void kalman_filter();
+
+/*****************************************************************************/
 
 /* Compute the matrix multiplication C = A * B
  * The size of A is 4*4 and the size of B is 4*4
@@ -52,6 +63,20 @@ Matrix41 scalar_multiply_41(Matrix41 B, double n);
  */
 Matrix44 matrix_trans_44(Matrix44 A);
 
+/*****************************************************************************/
+
+Matrix22 matrix_multiply_22(Matrix22 A, Matrix22 B);
+
+Matrix21 matrix_multiply_21(Matrix22 A, Matrix21 B);
+
+Matrix22 scalar_multiply_22(Matrix22 A, double n);
+
+Matrix21 scalar_multiply_21(Matrix21 B, double n);
+
+Matrix22 matrix_trans_22(Matrix22 A);
+
+/*****************************************************************************/
+
 /* Compute the determinant of matrix A recursively.
  * Where k is the order of matrix.
  */
@@ -63,7 +88,13 @@ double determinant(Matrix44 A, int k);
 Matrix44 adjugate(Matrix44 A, int k);
 
 /* Compute the inverse of matrix A.
+ * The size of A is 4*4
  */
-Matrix44 inverse(Matrix44 A);
+Matrix44 inverse4(Matrix44 A);
+
+/* Compute the inverse of matrix A.
+ * The size of A is 2*2
+ */
+Matrix22 inverse2(Matrix22 A);
 
 #endif /* _H_CTRL_OPERATION */
