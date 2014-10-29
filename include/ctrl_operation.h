@@ -26,10 +26,17 @@ typedef struct matrix22 {
 
 /*****************************************************************************/
 
- /* Kalman filter function.
-  * Read the previous state vector, current measurement and noise.
-  * Return the current state vector via reference.
-  */
+/* Set initial values to the global variables in Kalman filter
+ */
+void init_kalman_filter();
+
+/* Kalman filter function.
+ * Read the previous state vector, current measurement and noise.
+ * Return the current state vector via reference.
+ * The state vector is defined as [positionX, positionY]
+ * The input is defined as pix / s
+ * The output is defined as [positionX, positionY]
+ */
 void kalman_filter();
 
 /*****************************************************************************/
@@ -70,6 +77,10 @@ Matrix21 matrix_multiply_21(Matrix22 A, Matrix21 B);
 Matrix22 scalar_multiply_22(Matrix22 A, double n);
 
 Matrix21 scalar_multiply_21(Matrix21 B, double n);
+
+Matrix22 matrix_add_22(Matrix22 A, Matrix22 B);
+
+Matrix21 matrix_add_21(Matrix21 A, Matrix21 B);
 
 Matrix22 matrix_trans_22(Matrix22 A);
 

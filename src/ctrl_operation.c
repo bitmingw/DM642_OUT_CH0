@@ -77,10 +77,40 @@ Matrix22 K;
 /* The estimate state vector */
 Matrix21 X_post;
 
+/* The unit matrix I */
+Matrix22 I;
+
 /* The estimate covariance */
 Matrix22 P_post;
 
 /*****************************************************************************/
+
+void init_kalman_filter()
+{
+    extern Matrix21 X_pre;
+    extern Matrix22 F;
+    extern Matrix21 B;
+    extern Matrix22 P_pre;
+    extern Matrix22 H;
+    extern Matrix22 I;
+    
+    X_pre.array[0][0] = 0;
+    X_pre.array[1][0] = 0;
+    
+    F.array[0][0] = 1;  F.array[0][1] = 0;
+    F.array[1][0] = 0;  F.array[1][1] = 1;
+    
+    B.array[0][0] = dt; B.array[1][0] = 0;
+    
+    P_pre.array[0][0] = 1;  P_pre.array[0][1] = 0;
+    P_pre.array[1][0] = 0;  P_pre.array[1][1] = 1;
+    
+    H.array[0][0] = 1;  H.array[0][1] = 0;
+    H.array[1][0] = 0;  H.array[1][1] = 1;
+    
+    I.array[0][0] = 1;  I.array[0][1] = 0;
+    I.array[1][0] = 0;  I.array[1][1] = 1;
+}
 
 void kalman_filter()
 {
@@ -169,13 +199,54 @@ void kalman_filter()
     /* The estimate state vector */
     extern Matrix21 X_post;
     
+    /* The unit matrix I */
+    extern Matrix22 I;
+    
     /* The estimate covariance */
     extern Matrix22 P_post;
     
     /*************************************************************************/
-
-    /* Predict the next state with the last state and predicted input */
-
+    Matrix21 temp21_1;
+    Matrix21 temp21_2;
+    Matrix22 temp22_1;
+    Matrix22 temp22_2;
+    
+    /* Predict Stage */
+    temp21_1 = matrix_multiply_21(F, X_pre);
+    temp21_2 = scalar_multiply_21(B, u);
+    X_predict = matrix_add_21(temp21_1, temp21_2);
+    
+    temp22_1 = matrix_multiply_22(F, P_pre);
+    temp22_2 = matrix_trans_22(F);
+    temp22_1 = matrix_multiply_22(temp22_1, temp22_2);
+    P_predict = matrix_add_22(temp22_1, Q);
+    
+    /* Do Measurement */
+    temp21_1 = matrix_multiply_21(H, X_measure);
+    z = matrix_add_21(temp21_1, v);
+    
+    /* Update Stage */
+    temp21_1 = matrix_multiply_21(H, X_predict);
+    temp21_1 = scalar_multiply_21(temp21_1, -1);
+    y = matrix_add_21(z, temp21_1);
+    
+    temp22_1 = matrix_multiply_22(H, P_predict);
+    temp22_2 = matrix_trans_22(H);
+    temp22_1 = matrix_multiply_22(temp22_1, temp22_2);
+    S = matrix_add_22(temp22_1, R);
+    
+    temp22_1 = matrix_trans_22(H);
+    temp22_1 = matrix_multiply_22(P_predict, temp22_1);
+    temp22_2 = inverse2(S);
+    K = matrix_multiply_22(temp22_1, temp22_2);
+    
+    temp21_1 = matrix_multiply_21(K, y);
+    X_post = matrix_add_21(X_predict, temp21_1);
+    
+    temp22_1 = matrix_multiply_22(K, H);
+    temp22_1 = scalar_multiply_22(temp22_1, -1);
+    temp22_1 = matrix_add_22(I, temp22_1);
+    P_post = matrix_multiply_22(temp22_1, P_predict);
 }
 
 
@@ -300,6 +371,30 @@ Matrix21 scalar_multiply_21(Matrix21 B, double n)
         B.array[i][0] *= n;
     }
     return B;
+}
+
+Matrix22 matrix_add_22(Matrix22 A, Matrix22 B)
+{
+    Matrix22 sum;
+    int i, j;
+    
+    for (i = 0; i < 2; i++) {
+        for (j = 0; j < 2; j++) {
+            sum.array[i][j] = A.array[i][j] + B.array[i][j];
+        }
+    }
+    return sum;
+}
+
+Matrix21 matrix_add_21(Matrix21 A, Matrix21 B)
+{
+    Matrix21 sum;
+    int i;
+    
+    for (i = 0; i < 2; i++) {
+        sum.array[i][0] = A.array[i][0] + B.array[i][0];
+    }
+    return sum;
 }
 
 Matrix22 matrix_trans_22(Matrix22 A)
