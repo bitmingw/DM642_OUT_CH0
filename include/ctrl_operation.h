@@ -23,16 +23,14 @@ typedef struct matrix22 {
     double array[2][2];
 } Matrix22;
 
+
 /*****************************************************************************/
 
  /* Kalman filter function.
   * Read the previous state vector, current measurement and noise.
   * Return the current state vector via reference.
-  * The state vector is defined as stat = [positionX, positionY, velocityX, velocityY], unit = pix
-  * The input / control vector is defined as input = [velocityX, 0, 0, 0], unit = pix / s
-  * The output vector is defined as output = [positionX, positionY, velocityX, velocityY], unit = pix
   */
-//void kalman_filter();
+void kalman_filter();
 
 /*****************************************************************************/
 

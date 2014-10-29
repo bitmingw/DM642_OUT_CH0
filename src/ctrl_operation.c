@@ -11,11 +11,81 @@
 
 #include "ctrl_operation.h"
 
-#if 0
-void kalman_filter(double * stat_pre[], double * input[], double * noise[], double * stat_esti)
+
+/* GLOBAL VARIABLES */
+/*****************************************************************************/
+
+/* Minimal time unit */
+double dt = 0.1;
+
+/* The former state vector */
+Matrix21 X_pre;
+
+/* The predicted state vector */
+Matrix21 X_predict;
+
+/* The state transition matrix F */
+Matrix22 F;
+
+/* The control input matrix B, give velocity (not acceleration) */
+Matrix21 B;
+
+/* The input value u */
+double u;
+
+/* The former estimate covariance */
+Matrix22 P_pre;
+
+/* The noise ratio of control input */
+double sigma_u;
+
+/* The noise matrix of control input Q */
+Matrix22 Q;
+
+/* The predicted covariance */
+Matrix22 P_predict;
+
+/* Measurement */
+/* The output transformation matrix H */
+Matrix22 H;
+
+/* The measurement error v */
+Matrix21 v;
+
+/* The measurement of state vector */
+Matrix21 X_measure;
+
+/* The estimate output z */
+Matrix21 z;
+
+/* The noise ratio of measurement */
+double sigma_z;
+
+/* The noise matrix of measurement R */
+Matrix22 R;
+
+/* Update Stage */
+/* The measurement residual y */
+Matrix21 y;
+
+/* The residual covariance matrix S */
+Matrix22 S;
+
+/* The optimal Kalman gain K */
+Matrix22 K;
+
+/* The estimate state vector */
+Matrix21 X_post;
+
+/* The estimate covariance */
+Matrix22 P_post;
+
+/*****************************************************************************/
+
+void kalman_filter()
 {
     /*************************************************************************/
-    /* Introduction of parameters in Kalman Filter */
+    /* Parameters in Kalman Filter */
     
     /* Prediction Stage */
     /* X_predict = F * X_pre + B * u */ /* Predict the state estimate */
@@ -34,55 +104,80 @@ void kalman_filter(double * stat_pre[], double * input[], double * noise[], doub
     /* R = v * v.transpose * var_of_m */
     
     /*************************************************************************/
-    /* Define a series of variables */
-    double dt = 0.1;     /* Minimal time unit */
+    /* Prediction Stage */
+    /* Minimal time unit */
+    extern double dt;
     
     /* The former state vector */
-    extern Matrix41 X_pre;
+    extern Matrix21 X_pre;
     
-    /* Predict state vector */
-    extern Matrix41 X_predict;
+    /* The predicted state vector */
+    extern Matrix21 X_predict;
     
     /* The state transition matrix F */
-    Matrix44 F;
+    extern Matrix22 F;
 
     /* The control input matrix B, give velocity (not acceleration) */
-    Matrix41 B;
+    extern Matrix21 B;
     
-    /* The input value */
+    /* The input value u */
     extern double u;
     
     /* The former estimate covariance */
-    extern Matrix44 P_pre;
+    extern Matrix22 P_pre;
 
     /* The noise ratio of control input */
-    double noise_mag;
+    extern double sigma_u;
 
-    /* The noise matrix of control input */
-    Matrix44 Q;
+    /* The noise matrix of control input Q */
+    extern Matrix22 Q;
+    
+    /* The predicted covariance */
+    extern Matrix22 P_predict;
 
     /*************************************************************************/
+    /* Measurement */
+    /* The output transformation matrix H */
+    extern Matrix22 H;
     
+    /* The measurement error v */
+    extern Matrix21 v;
     
+    /* The measurement of state vector */
+    extern Matrix21 X_measure;
+    
+    /* The estimate output z */
+    extern Matrix21 z;
+    
+    /* The noise ratio of measurement */
+    extern double sigma_z;
+    
+    /* The noise matrix of measurement R */
+    extern Matrix22 R;
     
     /*************************************************************************/
-    /* Initialize these variables */
+    /* Update Stage */
+    /* The measurement residual y */
+    extern Matrix21 y;
+    
+    /* The residual covariance matrix S */
+    extern Matrix22 S;
+    
+    /* The optimal Kalman gain K */
+    extern Matrix22 K;
+    
+    /* The estimate state vector */
+    extern Matrix21 X_post;
+    
+    /* The estimate covariance */
+    extern Matrix22 P_post;
+    
+    /*************************************************************************/
 
-    F.array[0][0] = 1;  F.array[0][1] = 0;  F.array[0][2] = dt; F.array[0][3] = 0;
-    F.array[1][0] = 0;  F.array[1][1] = 1;  F.array[1][2] = 0;  F.array[1][3] = dt;
-    F.array[2][0] = 0;  F.array[2][1] = 0;  F.array[2][2] = 1;  F.array[2][3] = 0;
-    F.array[3][0] = 0;  F.array[3][1] = 0;  F.array[3][2] = 0;  F.array[3][3] = 1;
-
-    B.array[0][0] = dt; B.array[1][0] = 0;  B.array[2][0] = 1;  F.array[3][0] = 0;
-
-    Q.array[0][0] = 1;  Q.array[0][1] = 0;  Q.array[0][2] = dt; Q.array[0][3] = 0;
-    Q.array[1][0] = 0;  Q.array[1][1] = 1;  Q.array[1][2] = 0;  Q.array[1][3] = dt;
-    Q.array[2][0] = 0;  Q.array[2][1] = 0;  Q.array[2][2] = 1;  Q.array[2][3] = 0;
-    Q.array[3][0] = 0;  Q.array[3][1] = 0;  Q.array[3][2] = 0;  Q.array[3][3] = 1;
     /* Predict the next state with the last state and predicted input */
 
 }
-#endif
+
 
 /*****************************************************************************/
 
