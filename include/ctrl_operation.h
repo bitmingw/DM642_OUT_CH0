@@ -52,4 +52,18 @@ Matrix41 scalar_multiply_41(Matrix41 B, double n);
  */
 Matrix44 matrix_trans_44(Matrix44 A);
 
+/* Compute the determinant of matrix A recursively.
+ * Where k is the order of matrix.
+ */
+double determinant(Matrix44 A, int k);
+
+/* Compute the adjugate of matrix A from determinant.
+ * Where k is the order of matrix.
+ */
+Matrix44 adjugate(Matrix44 A, int k);
+
+/* Compute the inverse of matrix A.
+ */
+Matrix44 inverse(Matrix44 A);
+
 #endif /* _H_CTRL_OPERATION */

@@ -14,6 +14,22 @@
 
 void kalman_filter(double * stat_pre[], double * input[], double * noise[], double * stat_esti)
 {
+    /*************************************************************************/
+    /* Introduction of parameters in Kalman Filter */
+    
+    /* Prediction Stage */
+    /* X_predict = F * X_pre + B * u */ /* Predict the state estimate */
+    /* P_predict = F * P_pre * F.transpose + Q */ /* Predict estimate covariance */
+    
+    /* Update Stage */
+    /* y = z - H * X_predict */ /* The measurement residual */
+    /* S = H * P_predict * H.transpose + R */ /* The residual covariance */
+    /* K = P_predict * H.transpose * S^(-1) */ /* Optimal Kalman Gain */
+    /* X_post = X_predict + K * y */ /* Update state estimate */
+    /* P_post = (I - K * H) * P_predict */ /* Update estimate covariance */
+    
+    /* Q = B * B.transpose * var_of_u */
+    
     /* Define a series of variables */
     double dt = 0.1;     /* Minimal time unit */
 
@@ -107,4 +123,86 @@ Matrix44 matrix_trans_44(Matrix44 A)
         }
     }
     return Ap;
+}
+
+double determinant(Matrix44 A, int k)
+{
+    int sign = 1;
+    double det = 0;
+    Matrix44 minor;
+    int i, j, m, n, c;
+    
+    /* Base case */
+    if (k == 1) {
+        return A.array[0][0];
+    }
+    /* Do recursion */
+    else {
+        det = 0;
+        for (c = 0; c < k; c++) {   /* c -> the chosen column to be exclusive */
+            m = 0;  /* the row in submatrix, index start from 0 */
+            n = 0;  /* the column in submatrix, index start from 0 */
+            for (i = 0; i < k; i++) {       /* i -> iterate over the original matrix */
+                for (j = 0; j < k; j++) {   /* j -> iterate over the original matrix */
+                    minor.array[i][j] = 0;
+                    if (i != 0 && j != c) {
+                        minor.array[m][n] = A.array[i][j];
+                        if (n < (k-2)) {
+                            n++;
+                        }
+                        else {
+                            n = 0;
+                            m++;
+                        }
+                    }
+                }
+            }
+            det = det + sign * (A.array[0][c] * determinant(minor, k-1));
+            sign *= -1; /* odd column positive, even column negative */
+        }
+        return det;
+    }
+}
+
+Matrix44 adjugate(Matrix44 A, int k)
+{
+    Matrix44 B;
+    Matrix44 fac;
+    int sign = 1;
+    int p, q, m, n, i, j;
+    for (q = 0; q < k; q++) {       /* q -> the chosen of row to be exclusive */
+        for (p = 0; p < k; p++) {   /* p -> the chosen of column to be exclusive */
+            m = 0;  /* the row in submatrix, index start from 0 */
+            n = 0;  /* the column in submatrix, index start from 0 */
+            for (i = 0; i < k; i++) {       /* i -> iterate over the original matrix */
+                for (j = 0; j < k; j++) {   /* j -> iterate over the original matrix */
+                    if (i != q && j != p) {
+                        B.array[m][n] = A.array[i][j];
+                        if (n < (k-2)) {
+                            n++;
+                        }
+                        else {
+                            n = 0;
+                            m++;
+                        }
+                    }
+                }
+            }
+            sign = (q+p)%2 ? -1 : 1;
+            fac.array[q][p] = sign * determinant(B, k-1);
+        }
+    }
+    
+    /* Compute the transpose */
+    return matrix_trans_44(fac);
+}
+
+Matrix44 inverse(Matrix44 A)
+{
+    double det;
+    Matrix44 adj;
+    
+    det = determinant(A, 4);
+    adj = adjugate(A, 4);
+    return scalar_multiply_44(adj, 1 / det);
 }
