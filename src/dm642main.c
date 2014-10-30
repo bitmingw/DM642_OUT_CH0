@@ -31,6 +31,7 @@
 #include "ctrl_operation.h"
 
 interrupt void MovingCtrl(void);
+void do_analysis();
 
 /********************************************************************/
 
@@ -126,6 +127,22 @@ VMD642_UART_Handle g_uartHandleA;
 /* Config Timer handler */
 TIMER_Handle hTimer;
 Uint32 TimerEventId;
+
+/********************************************************************/
+
+/* GLOBAL VARIABLES - CONTROL PARAMETERS */
+Uint8 turnLeft[7]  = {0xFF, 0x01, 0x00, 0x04, 0x3F, 0x00, 0x44};
+Uint8 turnRight[7] = {0xFF, 0x01, 0x00, 0x02, 0x3F, 0x00, 0x42};
+Uint8 stay[7]      = {0xFF, 0x01, 0x00, 0x00, 0x00, 0x00, 0x01};
+
+Uint8 moveSchedule[2];
+static Uint32 curMove = 0;  /* Index of move schedule, 0 is observe and 1 is move */
+
+/* Remaining period for the next movement */
+static int observePeriod = 1;   /* 0.1s */
+
+/* Rotate angular speed: pix/s */
+static double angular_speed = 1;    /* Based on measurement */
 
 /********************************************************************/
 
@@ -271,10 +288,6 @@ void main()
     Uint32 YAddBuf, CbAddBuf, CrAddBuf;
     /* Buf addr to store results */
     Uint32 YAnsBuf, CbAnsBuf, CrAnsBuf;
-    
-    /* Position of moving object */
-    int positionX, positionY;
-    int rangeX, rangeY;
 
 /*-------------------------------------------------------*/
 /* perform all initializations                           */
@@ -467,13 +480,15 @@ void main()
     CbBuf = CbbufferDiff12; CbAddBuf = CbbufferDiff23;
     CrBuf = CrbufferDiff12; CrAddBuf = CrbufferDiff23;
     merge_diff_frame_gray(numLines, numPixels, YBuf, CbBuf, CrBuf, YAddBuf, CbAddBuf, CrAddBuf,
-        YbufferPost, disCbbuffer, disCrbuffer);
+        disYbuffer, disCbbuffer, disCrbuffer);
+
+    /*初始化Kalman滤波器*/
+    init_kalman_filter();
+    
     /*
-    centroid(numLines, numPixels, YbufferPost, &positionX, &positionY);
-    draw_rectangle(numLines, numPixels, YbufferPost, positionX, positionY);
-    */
     histograms(numLines, numPixels, YbufferPost);
     send_frame_gray(numLines, numPixels, YbufferPost, disYbuffer);
+    */
 
 	/*启动显示模块*/
 	bt656_display_start(vpHchannel0);
@@ -562,18 +577,88 @@ void main()
             CbBuf = CbbufferDiff12; CbAddBuf = CbbufferDiff23;
             CrBuf = CrbufferDiff12; CrAddBuf = CrbufferDiff23;
             merge_diff_frame_gray(numLines, numPixels, YBuf, CbBuf, CrBuf, YAddBuf, CbAddBuf, CrAddBuf,
-                YbufferPost, disCbbuffer, disCrbuffer);
+                disYbuffer, disCbbuffer, disCrbuffer);
+            
             /*
-            centroid(numLines, numPixels, YbufferPost, &positionX, &positionY);
-            draw_rectangle(numLines, numPixels, YbufferPost, positionX, positionY);
-            */
             histograms(numLines, numPixels, YbufferPost);
             send_frame_gray(numLines, numPixels, YbufferPost, disYbuffer);
+            */
 		}
 	}
 }
 
 interrupt void MovingCtrl(void)
 {
+    extern Matrix21 X_post;
+    Uint8 i;
+    
+    observePeriod--;    /* 0.1s passed */
+    
+    /* Calculate pre-configure parameters of filter */
+    do_analysis();
+    
+    /* Iterate the filter process */
+    kalman_filter();
+    
+    /* if enter a new moving period is met, set proper movement */
+    if (observePeriod <= 0) {
+        if (curMove == 1) {
+            /* A stop required */
+            curMove = 0;
+            observePeriod = 1;
+            for (i = 0; i < 7; i++) {
+                VMD642_UART_putChar(g_uartHandleA, stay[i]);
+            }
+        }
+        else {
+            /* Need to go */
+            curMove = 1;
+            observePeriod = 9;
+            if (X_post.array[0][0] < numPixels/2) {
+                for (i = 0; i < 7; i++) {
+                    VMD642_UART_putChar(g_uartHandleA, turnLeft[i]);
+                }
+            }
+            else {
+                for (i = 0; i < 7; i++) {
+                    VMD642_UART_putChar(g_uartHandleA, turnRight[i]);
+                }
+            }
+        }
+    }
+    /* TODO observe 9 times, calculate the gradient and determine the movement */
+    
+}
 
+void do_analysis(void)
+{
+    extern Uint32 disYbuffer;
+    extern int numPixels, numLines;
+    extern int positionX, positionY, rangeX, rangeY;
+    
+    extern Matrix21 X_pre, X_post, X_measure, B, v;
+    extern Matrix22 R, P_pre, P_post;
+    extern double u, sigma_z;
+    
+    histograms(numLines, numPixels, disYbuffer);
+    
+    hist_analysis(numLines, numPixels, &positionX, &positionY, &rangeX, &rangeY);
+    
+    /* No object is found, set the position in the center of the screen */
+    if (rangeX == 0 || rangeY == 0) {
+        X_measure.array[0][0] = numPixels / 2;
+        X_measure.array[1][0] = numLines / 2;
+    }
+    /* One object is found, update variables */
+    else {
+        X_measure.array[0][0] = positionX;
+        X_measure.array[1][0] = positionY;
+        u = moveSchedule[curMove] * angular_speed;  /* input value */
+        sigma_z = rangeX / numPixels;   /* measurement error */
+        R = matrix_construct_22(v, v);
+        R = scalar_multiply_22(R, sigma_z);
+    }
+    /* Do iteration for state vector and covariance */
+    X_pre = X_post;
+    P_pre = P_post;
 }

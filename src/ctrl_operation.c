@@ -1,20 +1,19 @@
 /*****************************************************************************
  * Author: bitmingw
- * Kalman filter, system modeling and moving control.
+ * Kalman filter, system modeling and calculation.
  *****************************************************************************/
 
 #include <csl.h>
-#include <csl_emifa.h>
-#include <csl_irq.h>
-#include <csl_chip.h>
-#include <csl_timer.h>
 
 #include "ctrl_operation.h"
-
 
 /* GLOBAL VARIABLES */
 /*****************************************************************************/
 
+/* Position of moving object */
+int positionX, positionY;
+int rangeX, rangeY;
+    
 /* Minimal time unit */
 double dt = 0.1;
 
@@ -87,23 +86,36 @@ Matrix22 P_post;
 
 void init_kalman_filter()
 {
-    extern Matrix21 X_pre;
+    /* variables in filter */
+    extern Matrix21 X_pre, X_post;
     extern Matrix22 F;
     extern Matrix21 B;
-    extern Matrix22 P_pre;
+    extern double u;
+    extern Matrix22 Q;
+    extern Matrix22 P_pre, P_post;
+    extern Matrix21 v;
     extern Matrix22 H;
     extern Matrix22 I;
     
-    X_pre.array[0][0] = 0;
-    X_pre.array[1][0] = 0;
+    /* variables in main routine */
+    extern int numPixels, numLines;
+    
+    X_post.array[0][0] = numPixels / 2;  /* For later iteration */
+    X_post.array[1][0] = numLines / 2;
     
     F.array[0][0] = 1;  F.array[0][1] = 0;
     F.array[1][0] = 0;  F.array[1][1] = 1;
     
     B.array[0][0] = dt; B.array[1][0] = 0;
     
-    P_pre.array[0][0] = 1;  P_pre.array[0][1] = 0;
-    P_pre.array[1][0] = 0;  P_pre.array[1][1] = 1;
+    u = 0.1;    /* Determined by moving object */
+    Q = matrix_construct_22(B, B);
+    Q = scalar_multiply_22(Q, u);
+    
+    P_post.array[0][0] = 1;  P_post.array[0][1] = 0;    /* For later iteration */
+    P_post.array[1][0] = 0;  P_post.array[1][1] = 1;
+    
+    v.array[0][0] = dt;     v.array[1][0] = dt;
     
     H.array[0][0] = 1;  H.array[0][1] = 0;
     H.array[1][0] = 0;  H.array[1][1] = 1;
@@ -248,7 +260,6 @@ void kalman_filter()
     temp22_1 = matrix_add_22(I, temp22_1);
     P_post = matrix_multiply_22(temp22_1, P_predict);
 }
-
 
 /*****************************************************************************/
 
@@ -395,6 +406,16 @@ Matrix21 matrix_add_21(Matrix21 A, Matrix21 B)
         sum.array[i][0] = A.array[i][0] + B.array[i][0];
     }
     return sum;
+}
+
+Matrix22 matrix_construct_22(Matrix21 A, Matrix21 B)
+{
+    Matrix22 C;
+    C.array[0][0] = A.array[0][0] * B.array[0][0];
+    C.array[0][1] = A.array[0][0] * B.array[1][0];
+    C.array[1][0] = A.array[1][0] * B.array[0][0];
+    C.array[1][1] = A.array[1][0] * B.array[1][0];
+    return C;
 }
 
 Matrix22 matrix_trans_22(Matrix22 A)

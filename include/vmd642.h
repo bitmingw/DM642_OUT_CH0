@@ -38,10 +38,6 @@ extern "C" {
 #define VMD642_IOOUT       0x12 //write only
 #define VMD642_IOINPUT     0x13 //read ony
 
-/* Macros of moving functions */
-#define HOLDER_MOV_STAY  0
-#define HOLDER_MOV_LEFT  1
-#define HOLDER_MOV_RIGHT 2
 
 /* Read an 8-bit value from a CPLD register */
 Uint8 VMD642_rget(Int16 regnum);

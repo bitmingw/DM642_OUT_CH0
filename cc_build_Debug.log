@@ -6,14 +6,10 @@
 [ctrl_operation.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "ctrl_operation.c"
 
 [dm642main.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "dm642main.c"
-"dm642main.c", line 269: warning: variable "CbSubBuf" was set but never used
-"dm642main.c", line 269: warning: variable "CrSubBuf" was set but never used
-"dm642main.c", line 273: warning: variable "CbAnsBuf" was set but never used
-"dm642main.c", line 273: warning: variable "CrAnsBuf" was set but never used
-"dm642main.c", line 276: warning: variable "positionX" was declared but never referenced
-"dm642main.c", line 276: warning: variable "positionY" was declared but never referenced
-"dm642main.c", line 277: warning: variable "rangeX" was declared but never referenced
-"dm642main.c", line 277: warning: variable "rangeY" was declared but never referenced
+"dm642main.c", line 286: warning: variable "CbSubBuf" was set but never used
+"dm642main.c", line 286: warning: variable "CrSubBuf" was set but never used
+"dm642main.c", line 290: warning: variable "CbAnsBuf" was set but never used
+"dm642main.c", line 290: warning: variable "CrAnsBuf" was set but never used
 
 [frame_operation.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "frame_operation.c"
 
@@ -33,4 +29,4 @@
 <Linking>
 
 Build Complete,
-  0 Errors, 8 Warnings, 0 Remarks.
+  0 Errors, 4 Warnings, 0 Remarks.

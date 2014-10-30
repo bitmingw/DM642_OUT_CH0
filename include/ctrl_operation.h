@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Author: bitmingw
- * Kalman filter, system modeling and moving control.
+ * Kalman filter, system modeling and calculation.
  *****************************************************************************/
 
  #ifndef _H_CTRL_OPERATION
@@ -23,6 +23,10 @@ typedef struct matrix22 {
     double array[2][2];
 } Matrix22;
 
+/* Macros of moving functions */
+#define HOLDER_MOV_STAY  0
+#define HOLDER_MOV_LEFT -1
+#define HOLDER_MOV_RIGHT 1
 
 /*****************************************************************************/
 
@@ -81,6 +85,8 @@ Matrix21 scalar_multiply_21(Matrix21 B, double n);
 Matrix22 matrix_add_22(Matrix22 A, Matrix22 B);
 
 Matrix21 matrix_add_21(Matrix21 A, Matrix21 B);
+
+Matrix22 matrix_construct_22(Matrix21 A, Matrix21 B);
 
 Matrix22 matrix_trans_22(Matrix22 A);
 
