@@ -355,15 +355,21 @@ void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int po
 void histograms(int numLines, int numPixels, int srcY)
 {
     int i, j;
-    Uint32 fillVal = 0x00000000;  /*32bit value to fill 0 to space*/
     extern Uint32 HIST_X[720];    /*Store the histogram on X axis*/
     extern Uint32 HIST_Y[588];    /*Store the histogram on Y axis*/
     extern Uint8 CACHE_S[720];    /*Iterate for each line*/
     
     /* Clear the former histogram info */
-    DAT_fill(HIST_X, numPixels, &fillVal);
-    DAT_fill(HIST_Y, numLines, &fillVal);
-    
+    for (i = 0; i < numPixels; i++)
+    {
+        HIST_X[i] = 0;
+    }
+    for (i = 0; i < numLines; i++)
+    {
+        HIST_Y[i] = 0;
+    }
+
+    /* Calculate two sides histogram at the same time */
     for (i = 0; i < numLines; i++)
     {
         DAT_copy((void *)(srcY + i * numPixels),

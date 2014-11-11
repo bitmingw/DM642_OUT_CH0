@@ -9,10 +9,6 @@
 
 /* GLOBAL VARIABLES */
 /*****************************************************************************/
-
-/* Position of moving object */
-int positionX, positionY;
-int rangeX, rangeY;
     
 /* Minimal time unit */
 double dt = 0.1;

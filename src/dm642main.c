@@ -155,6 +155,12 @@ int numLines  = 576;//每帧576行（PAL）
 Uint32 thresholdX = 720;
 Uint32 thresholdY = 576;
 
+/*运动目标位置*/
+int positionX;
+int positionY;
+int rangeX;
+int rangeY;
+
 /*声明缓存空间*/
 #pragma DATA_ALIGN(CACHE_A, CACHE_L2_LINESIZE)
 #pragma DATA_ALIGN(CACHE_B, CACHE_L2_LINESIZE)
