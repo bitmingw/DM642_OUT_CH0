@@ -131,18 +131,19 @@ Uint32 TimerEventId;
 /********************************************************************/
 
 /* GLOBAL VARIABLES - CONTROL PARAMETERS */
-Uint8 turnLeft[7]  = {0xFF, 0x01, 0x00, 0x04, 0x3F, 0x00, 0x44};
-Uint8 turnRight[7] = {0xFF, 0x01, 0x00, 0x02, 0x3F, 0x00, 0x42};
+/* NOTE: holder turn left == camera turn right, here we use camera as reference */
+Uint8 turnRight[7] = {0xFF, 0x01, 0x00, 0x04, 0x3F, 0x00, 0x44};
+Uint8 turnLeft[7]  = {0xFF, 0x01, 0x00, 0x02, 0x3F, 0x00, 0x42};
 Uint8 stay[7]      = {0xFF, 0x01, 0x00, 0x00, 0x00, 0x00, 0x01};
 
-int moveCmd[3] = {HOLDER_MOV_STAY, HOLDER_MOV_LEFT, HOLDER_MOV_RIGHT};
+//int moveCmd[3] = {HOLDER_MOV_STAY, HOLDER_MOV_LEFT, HOLDER_MOV_RIGHT};
 
 /* Indicates the move commands */
-Uint32 curMove = HOLDER_STAY_CMD;
-Uint32 nextMove = HOLDER_STAY_CMD;
+int curMove  = HOLDER_MOV_STAY;
+int nextMove = HOLDER_MOV_STAY;
 
 /* Rotate angular speed: pix/s */
-static double angular_speed = 1;    /* TODO: set proper value by experiment */
+static double angular_speed = 43.64;    /* Set the value by experiment */
 
 /********************************************************************/
 
@@ -151,8 +152,8 @@ int numPixels = 720;//每行720个像素
 int numLines  = 576;//每帧576行（PAL）
 
 /*运动目标的直方图强度阈值*/
-Uint32 thresholdX = 36;
-Uint32 thresholdY = 28;
+Uint32 thresholdX = 720;
+Uint32 thresholdY = 576;
 
 /*声明缓存空间*/
 #pragma DATA_ALIGN(CACHE_A, CACHE_L2_LINESIZE)
@@ -600,34 +601,35 @@ interrupt void MovingCtrl(void)
     kalman_filter();
     
     /* if no object found, stop the holder if it is running */
-    if (nextMove == HOLDER_STAY_CMD && curMove != HOLDER_STAY_CMD) {
+    if (nextMove == HOLDER_MOV_STAY && curMove != HOLDER_MOV_STAY) {
         for (i = 0; i < 7; i++) {
             VMD642_UART_putChar(g_uartHandleA, stay[i]);
         }
     }
     /* if we are tracking an object, decide the direction to move */
-    if (nextMove == HOLDER_UNKNOWN_CMD && z.array[0][0] < numPixels/2) {
-        nextMove = HOLDER_LEFT_CMD;
+    if (nextMove == HOLDER_MOV_UNDEF) {
+        if (z.array[0][0] < numPixels/2) {
+            nextMove = HOLDER_MOV_LEFT;
+        }
+        else {
+            nextMove = HOLDER_MOV_RIGHT;
+        }
     }
-    else if (nextMove == HOLDER_UNKNOWN_CMD && z.array[0][0] > numPixels/2) {
-        nextMove = HOLDER_RIGHT_CMD;
-    }
+
     /* Set moving command if next != current */
-    if (nextMove == HOLDER_LEFT_CMD && curMove != HOLDER_LEFT_CMD) {
+    if (nextMove == HOLDER_MOV_LEFT && curMove != HOLDER_MOV_LEFT) {
         for (i = 0; i < 7; i++) {
             VMD642_UART_putChar(g_uartHandleA, turnLeft[i]);
         }
     }
-    else if (nextMove == HOLDER_RIGHT_CMD && curMove != HOLDER_RIGHT_CMD) {
+    else if (nextMove == HOLDER_MOV_RIGHT && curMove != HOLDER_MOV_RIGHT) {
         for (i = 0; i < 7; i++) {
             VMD642_UART_putChar(g_uartHandleA, turnRight[i]);
         }
     }
     
     /* Finally update moving command */
-    if (nextMove != HOLDER_UNKNOWN_CMD) {
-        curMove = nextMove;
-    }
+    curMove = nextMove;
 }
 
 void do_analysis(void)
@@ -646,20 +648,20 @@ void do_analysis(void)
     
     /* No object is found, don't change measurement position, but update input value */
     /* Stop movement of the camera */
-    if (rangeX == 0 || rangeY == 0) {
-        u = moveCmd[curMove] * angular_speed;
-        nextMove = HOLDER_STAY_CMD;
+    if ((rangeX == 0 || rangeY == 0) && (curMove != HOLDER_MOV_UNDEF)) {
+        u = curMove * angular_speed;
+        nextMove = HOLDER_MOV_STAY;
     }
     /* One object is found, update variables */
     /* Move camera to track the object */
     else {
         X_measure.array[0][0] = positionX;
         X_measure.array[1][0] = positionY;
-        u = moveCmd[curMove] * angular_speed;  /* input value */
+        u = curMove * angular_speed;  /* input value */
         sigma_z = rangeX / numPixels;   /* measurement error */
         R = matrix_construct_22(v, v);
         R = scalar_multiply_22(R, sigma_z);
-        nextMove = HOLDER_UNKNOWN_CMD;
+        nextMove = HOLDER_MOV_UNDEF;
     }
     /* Do iteration for state vector and covariance */
     X_pre = X_post;

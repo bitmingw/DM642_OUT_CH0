@@ -24,14 +24,10 @@ typedef struct matrix22 {
 } Matrix22;
 
 /* Macros of moving functions */
-#define HOLDER_MOV_STAY  0
-#define HOLDER_MOV_LEFT -1
-#define HOLDER_MOV_RIGHT 1
-
-#define HOLDER_STAY_CMD    0
-#define HOLDER_LEFT_CMD    1
-#define HOLDER_RIGHT_CMD   2
-#define HOLDER_UNKNOWN_CMD 3
+#define HOLDER_MOV_STAY   0
+#define HOLDER_MOV_LEFT  -1
+#define HOLDER_MOV_RIGHT  1
+#define HOLDER_MOV_UNDEF  2
 
 /*****************************************************************************/
 
