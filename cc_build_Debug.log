@@ -6,10 +6,10 @@
 [ctrl_operation.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "ctrl_operation.c"
 
 [dm642main.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "dm642main.c"
-"dm642main.c", line 293: warning: variable "CbSubBuf" was set but never used
-"dm642main.c", line 293: warning: variable "CrSubBuf" was set but never used
-"dm642main.c", line 297: warning: variable "CbAnsBuf" was set but never used
-"dm642main.c", line 297: warning: variable "CrAnsBuf" was set but never used
+"dm642main.c", line 294: warning: variable "CbSubBuf" was set but never used
+"dm642main.c", line 294: warning: variable "CrSubBuf" was set but never used
+"dm642main.c", line 298: warning: variable "CbAnsBuf" was set but never used
+"dm642main.c", line 298: warning: variable "CrAnsBuf" was set but never used
 
 [frame_operation.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -g -q -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Debug" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"_DEBUG" -d"CHIP_DM642" -mv6400 -@"../Debug.lkf" "frame_operation.c"
 

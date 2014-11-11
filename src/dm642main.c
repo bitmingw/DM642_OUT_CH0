@@ -10,6 +10,7 @@
 /*  															    */
 /********************************************************************/
 
+#include <stdlib.h>
 #include <csl.h>
 #include <csl_cache.h>
 #include <csl_emifa.h>
@@ -488,7 +489,9 @@ void main()
     CrBuf = CrbufferDiff12; CrAddBuf = CrbufferDiff23;
     merge_diff_frame_gray(numLines, numPixels, YBuf, CbBuf, CrBuf, YAddBuf, CbAddBuf, CrAddBuf,
         disYbuffer, disCbbuffer, disCrbuffer);
-
+    
+    /*采集随机数种子*/
+    srand(TIMER_getCount(hTimer));
     /*初始化Kalman滤波器*/
     init_kalman_filter();
     
@@ -645,8 +648,8 @@ void do_analysis(void)
     extern int positionX, positionY, rangeX, rangeY;
     
     extern Matrix21 X_pre, X_post, X_measure, B, v;
-    extern Matrix22 R, P_pre, P_post;
-    extern double u, sigma_z;
+    extern Matrix22 P_pre, P_post;
+    extern double u, sigma_u, sigma_z;
     
     histograms(numLines, numPixels, disYbuffer);
     
@@ -664,9 +667,8 @@ void do_analysis(void)
         X_measure.array[0][0] = positionX;
         X_measure.array[1][0] = positionY;
         u = curMove * angular_speed;  /* input value */
-        sigma_z = rangeX / numPixels;   /* measurement error */
-        R = matrix_construct_22(v, v);
-        R = scalar_multiply_22(R, sigma_z);
+        sigma_u = rangeX / numPixels;   /* process error */
+        sigma_z = 0.01;             /* measurement error, estimated as constant */
         nextMove = HOLDER_MOV_UNDEF;
     }
     /* Do iteration for state vector and covariance */

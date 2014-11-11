@@ -31,6 +31,10 @@ typedef struct matrix22 {
 
 /*****************************************************************************/
 
+/* Return a random number in (-1, 1)
+ */
+double sig_rand();
+
 /* Set initial values to the global variables in Kalman filter
  */
 void init_kalman_filter();

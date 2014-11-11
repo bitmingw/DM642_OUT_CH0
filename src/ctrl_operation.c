@@ -3,6 +3,7 @@
  * Kalman filter, system modeling and calculation.
  *****************************************************************************/
 
+#include <stdlib.h>
 #include <csl.h>
 
 #include "ctrl_operation.h"
@@ -44,6 +45,9 @@ Matrix22 P_predict;
 /* The output transformation matrix H */
 Matrix22 H;
 
+/* The noise ratio of measurement */
+double sigma_z;
+
 /* The measurement error v */
 Matrix21 v;
 
@@ -52,9 +56,6 @@ Matrix21 X_measure;
 
 /* The estimate output z */
 Matrix21 z;
-
-/* The noise ratio of measurement */
-double sigma_z;
 
 /* The noise matrix of measurement R */
 Matrix22 R;
@@ -80,6 +81,11 @@ Matrix22 P_post;
 
 /*****************************************************************************/
 
+double sig_rand()
+{
+    return ((double)rand() / RAND_MAX - 0.5) * 2;
+}
+
 void init_kalman_filter()
 {
     /* variables in filter */
@@ -87,6 +93,7 @@ void init_kalman_filter()
     extern Matrix22 F;
     extern Matrix21 B;
     extern double u;
+    extern double sigma_u, sigma_z;
     extern Matrix22 Q;
     extern Matrix22 P_pre, P_post;
     extern Matrix21 v;
@@ -104,14 +111,18 @@ void init_kalman_filter()
     
     B.array[0][0] = dt; B.array[1][0] = 0;
     
-    u = 0.1;    /* Determined by moving object */
+    u = 0;  /* Determined by moving object */
+    sigma_u = 0;
     Q = matrix_construct_22(B, B);
-    Q = scalar_multiply_22(Q, u);
+    Q = scalar_multiply_22(Q, sigma_u);
     
     P_post.array[0][0] = 1;  P_post.array[0][1] = 0;    /* For later iteration */
     P_post.array[1][0] = 0;  P_post.array[1][1] = 1;
     
+    sigma_z = 0;
     v.array[0][0] = dt;     v.array[1][0] = dt;
+    R = matrix_construct_22(v, v);
+    R = scalar_multiply_22(R, sigma_z);
     
     H.array[0][0] = 1;  H.array[0][1] = 0;
     H.array[1][0] = 0;  H.array[1][1] = 1;
@@ -178,6 +189,9 @@ void kalman_filter()
     /* The output transformation matrix H */
     extern Matrix22 H;
     
+    /* The noise ratio of measurement */
+    extern double sigma_z;   
+    
     /* The measurement error v */
     extern Matrix21 v;
     
@@ -186,9 +200,6 @@ void kalman_filter()
     
     /* The estimate output z */
     extern Matrix21 z;
-    
-    /* The noise ratio of measurement */
-    extern double sigma_z;
     
     /* The noise matrix of measurement R */
     extern Matrix22 R;
@@ -218,6 +229,13 @@ void kalman_filter()
     Matrix21 temp21_2;
     Matrix22 temp22_1;
     Matrix22 temp22_2;
+    
+    /* Add noise into process and measurement matrix */
+    Q.array[0][0] = sigma_u * sig_rand();
+    Q.array[1][1] = sigma_u * sig_rand();
+    v.array[0][0] = sigma_z * sig_rand();
+    v.array[1][0] = sigma_z * sig_rand();
+    R = matrix_construct_22(v, v);
     
     /* Predict Stage */
     temp21_1 = matrix_multiply_21(F, X_pre);
