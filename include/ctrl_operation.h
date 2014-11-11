@@ -28,6 +28,11 @@ typedef struct matrix22 {
 #define HOLDER_MOV_LEFT -1
 #define HOLDER_MOV_RIGHT 1
 
+#define HOLDER_STAY_CMD    0
+#define HOLDER_LEFT_CMD    1
+#define HOLDER_RIGHT_CMD   2
+#define HOLDER_UNKNOWN_CMD 3
+
 /*****************************************************************************/
 
 /* Set initial values to the global variables in Kalman filter

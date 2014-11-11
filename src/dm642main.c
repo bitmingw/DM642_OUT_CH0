@@ -135,14 +135,14 @@ Uint8 turnLeft[7]  = {0xFF, 0x01, 0x00, 0x04, 0x3F, 0x00, 0x44};
 Uint8 turnRight[7] = {0xFF, 0x01, 0x00, 0x02, 0x3F, 0x00, 0x42};
 Uint8 stay[7]      = {0xFF, 0x01, 0x00, 0x00, 0x00, 0x00, 0x01};
 
-Uint8 moveSchedule[2];
-static Uint32 curMove = 0;  /* Index of move schedule, 0 is observe and 1 is move */
+int moveCmd[3] = {HOLDER_MOV_STAY, HOLDER_MOV_LEFT, HOLDER_MOV_RIGHT};
 
-/* Remaining period for the next movement */
-static int observePeriod = 1;   /* 0.1s */
+/* Indicates the move commands */
+Uint32 curMove = HOLDER_STAY_CMD;
+Uint32 nextMove = HOLDER_STAY_CMD;
 
 /* Rotate angular speed: pix/s */
-static double angular_speed = 1;    /* Based on measurement */
+static double angular_speed = 1;    /* TODO: set proper value by experiment */
 
 /********************************************************************/
 
@@ -590,9 +590,8 @@ void main()
 interrupt void MovingCtrl(void)
 {
     extern Matrix21 X_post;
+    extern Matrix21 z;
     Uint8 i;
-    
-    observePeriod--;    /* 0.1s passed */
     
     /* Calculate pre-configure parameters of filter */
     do_analysis();
@@ -600,34 +599,35 @@ interrupt void MovingCtrl(void)
     /* Iterate the filter process */
     kalman_filter();
     
-    /* if enter a new moving period is met, set proper movement */
-    if (observePeriod <= 0) {
-        if (curMove == 1) {
-            /* A stop required */
-            curMove = 0;
-            observePeriod = 1;
-            for (i = 0; i < 7; i++) {
-                VMD642_UART_putChar(g_uartHandleA, stay[i]);
-            }
-        }
-        else {
-            /* Need to go */
-            curMove = 1;
-            observePeriod = 9;
-            if (X_post.array[0][0] < numPixels/2) {
-                for (i = 0; i < 7; i++) {
-                    VMD642_UART_putChar(g_uartHandleA, turnLeft[i]);
-                }
-            }
-            else {
-                for (i = 0; i < 7; i++) {
-                    VMD642_UART_putChar(g_uartHandleA, turnRight[i]);
-                }
-            }
+    /* if no object found, stop the holder if it is running */
+    if (nextMove == HOLDER_STAY_CMD && curMove != HOLDER_STAY_CMD) {
+        for (i = 0; i < 7; i++) {
+            VMD642_UART_putChar(g_uartHandleA, stay[i]);
         }
     }
-    /* TODO observe 9 times, calculate the gradient and determine the movement */
+    /* if we are tracking an object, decide the direction to move */
+    if (nextMove == HOLDER_UNKNOWN_CMD && z.array[0][0] < numPixels/2) {
+        nextMove = HOLDER_LEFT_CMD;
+    }
+    else if (nextMove == HOLDER_UNKNOWN_CMD && z.array[0][0] > numPixels/2) {
+        nextMove = HOLDER_RIGHT_CMD;
+    }
+    /* Set moving command if next != current */
+    if (nextMove == HOLDER_LEFT_CMD && curMove != HOLDER_LEFT_CMD) {
+        for (i = 0; i < 7; i++) {
+            VMD642_UART_putChar(g_uartHandleA, turnLeft[i]);
+        }
+    }
+    else if (nextMove == HOLDER_RIGHT_CMD && curMove != HOLDER_RIGHT_CMD) {
+        for (i = 0; i < 7; i++) {
+            VMD642_UART_putChar(g_uartHandleA, turnRight[i]);
+        }
+    }
     
+    /* Finally update moving command */
+    if (nextMove != HOLDER_UNKNOWN_CMD) {
+        curMove = nextMove;
+    }
 }
 
 void do_analysis(void)
@@ -644,19 +644,22 @@ void do_analysis(void)
     
     hist_analysis(numLines, numPixels, &positionX, &positionY, &rangeX, &rangeY);
     
-    /* No object is found, set the position in the center of the screen */
+    /* No object is found, don't change measurement position, but update input value */
+    /* Stop movement of the camera */
     if (rangeX == 0 || rangeY == 0) {
-        X_measure.array[0][0] = numPixels / 2;
-        X_measure.array[1][0] = numLines / 2;
+        u = moveCmd[curMove] * angular_speed;
+        nextMove = HOLDER_STAY_CMD;
     }
     /* One object is found, update variables */
+    /* Move camera to track the object */
     else {
         X_measure.array[0][0] = positionX;
         X_measure.array[1][0] = positionY;
-        u = moveSchedule[curMove] * angular_speed;  /* input value */
+        u = moveCmd[curMove] * angular_speed;  /* input value */
         sigma_z = rangeX / numPixels;   /* measurement error */
         R = matrix_construct_22(v, v);
         R = scalar_multiply_22(R, sigma_z);
+        nextMove = HOLDER_UNKNOWN_CMD;
     }
     /* Do iteration for state vector and covariance */
     X_pre = X_post;
