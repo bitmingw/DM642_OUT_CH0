@@ -66,7 +66,7 @@ VMD642_UART_Config g_uartConfig ={
 /* Config Timer0 */
 TIMER_Config timerConfig = {
     0x00000280, /* interal clock, reset counter and hold */
-    0x007270E0, /* interrupt every 0.1s */
+    0x00E4E1C0, /* interrupt every 0.2s */
     0x00000000  /* start from 0 */
 };
 

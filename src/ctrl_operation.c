@@ -12,7 +12,7 @@
 /*****************************************************************************/
     
 /* Minimal time unit */
-double dt = 0.1;
+double dt = 0.2;
 
 /* The former state vector */
 Matrix21 X_pre;
