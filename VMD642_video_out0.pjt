@@ -31,7 +31,7 @@ Source="VMD642_video_out.cmd"
 Options=-g -q -fr"C:\Documents and Settings\Administrator\My Documents\DM642_OUT_CH0\Debug" -i"C:\Documents and Settings\Administrator\My Documents\DM642_OUT_CH0\include" -d"_DEBUG" -d"CHIP_DM642" -mv6400
 
 ["Compiler" Settings: "Release"]
-Options=-q -o3 -fr"C:\Documents and Settings\Administrator\My Documents\DM642_OUT_CH0\Release" -mv6400
+Options=-q -o3 -fr"C:\Documents and Settings\Administrator\My Documents\DM642_OUT_CH0\Release" -i"C:\Documents and Settings\Administrator\My Documents\DM642_OUT_CH0\include" -d"CHIP_DM642" -mv6400
 
 ["DspBiosBuilder" Settings: "Debug"]
 Options=-v6x
@@ -43,5 +43,5 @@ Options=-v6x
 Options=-q -c -m".\Debug\VMD642_video_out1.map" -o".\Debug\VMD642_video_out1.out" -stack0x400 -w -x
 
 ["Linker" Settings: "Release"]
-Options=-q -c -m".\Release\VMD642_video_out1.map" -o".\Release\VMD642_video_out1.out" -w -x
+Options=-q -c -m".\Release\VMD642_video_out1.map" -o".\Release\VMD642_video_out1.out" -stack0x400 -w -x
 
