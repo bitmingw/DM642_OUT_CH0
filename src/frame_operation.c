@@ -140,6 +140,7 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
 void gen_diff_frame_gray(int numLines, int numPixels, int Y, int subY, int dstY)
 {
     int i, j;
+    Uint8 diff_val;
     extern Uint8 CACHE_A[720];
     extern Uint8 CACHE_B[720];
     extern Uint8 CACHE_S[720];
@@ -156,7 +157,8 @@ void gen_diff_frame_gray(int numLines, int numPixels, int Y, int subY, int dstY)
                  CACHE_B, numPixels);
         for (j = 0; j < numPixels; j++)
         {
-            CACHE_S[j] = ((CACHE_A[j] ^ CACHE_B[j]) & 0x80) ? 0xFF : 0x00;
+            diff_val = CACHE_A[j] > CACHE_B[j] ? (CACHE_A[j] - CACHE_B[j]) : (CACHE_B[j] - CACHE_A[j]);
+            CACHE_S[j] = diff_val > 0x40 ? 0xFF : 0x00;     /* 0x40 is a proper value to use */
         }
         DAT_copy(CACHE_S,
                  (void *)(dstY + i * numPixels), numPixels);
