@@ -122,10 +122,6 @@ static double angular_speed = 43.64;    /* Set the value by experiment */
 int numPixels = 720;//每行720个像素
 int numLines  = 576;//每帧576行（PAL）
 
-/*运动目标的直方图强度阈值*/
-Uint32 thresholdX = 720;
-Uint32 thresholdY = 576;
-
 /*运动目标位置*/
 int positionX;
 int positionY;
