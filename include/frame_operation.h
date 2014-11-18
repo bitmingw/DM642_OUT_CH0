@@ -46,10 +46,14 @@ void merge_diff_frame_gray(int numLines, int numPixels, int diff1Y, int diff1Cb,
  */
 void centroid(int numLines, int numPixels, int srcY, int * positionX, int * positionY);
 
-/* Draw a white rectangle in the currect frame.
- * The size of rectangle and line width are determined by the function itself.
+/* Draw a white rectangle in the current frame.
+ * The location of rectangle is determined by the location of moving object, namely positionX and positionY.
+ * Make sure positionX and positionY are in the range of screen.
+ * The size of rectangle is determined by the size of moving object, namely rangeX and rangeY.
+ * Make sure rangeX and rangeY are not zero.
+ * The width of rectangle is a constant value 1.
  */
-void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int positionY);
+void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int positionY, int rangeX, int rangeY);
 
 /* Calculate histogram of two axes of image.
  * Update two preallocated arrays to store the values.

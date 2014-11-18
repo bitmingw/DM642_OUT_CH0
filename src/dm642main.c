@@ -357,11 +357,10 @@ void main()
             CrBuf = CrbufferDiff12; CrAddBuf = CrbufferDiff23;
             merge_diff_frame_gray(numLines, numPixels, YBuf, CbBuf, CrBuf, YAddBuf, CbAddBuf, CrAddBuf,
                 disYbuffer, disCbbuffer, disCrbuffer);
+                
+            /*为运动目标画方框*/
+            draw_rectangle(numLines, numPixels, disYbuffer, positionX, positionY, rangeX, rangeY);
             
-            /*
-            histograms(numLines, numPixels, YbufferPost);
-            send_frame_gray(numLines, numPixels, YbufferPost, disYbuffer);
-            */
 		}
 	}
 }
