@@ -390,6 +390,7 @@ void hist_analysis(int numLines, int numPixels, int * positionX, int * positionY
     
     /* Calculate on X axis */
     peakValX = 0;
+    peakPositionX = 0;
     for (i = 0; i < 720; i++)
     {
         if (HIST_X[i] > peakValX) 
@@ -401,7 +402,8 @@ void hist_analysis(int numLines, int numPixels, int * positionX, int * positionY
     
     /* Calculate on Y axis */
     peakValY = 0;
-    for (i = 0; i < 588; i++)
+    peakPositionY = 0;
+    for (i = 0; i < 294; i++)
     {
         if (HIST_Y[i] > peakValY)
         {
@@ -413,7 +415,7 @@ void hist_analysis(int numLines, int numPixels, int * positionX, int * positionY
     /* Check if thresholds are met - there is a moving object */
     
     /* No object detected */
-    if (peakValX < thresholdX || peakValY < thresholdY)
+    if (peakValX < thresholdX || peakValY < thresholdY/2)
     {
         *positionX = peakPositionX;
         *positionY = peakPositionY;
@@ -426,6 +428,10 @@ void hist_analysis(int numLines, int numPixels, int * positionX, int * positionY
     {
         edgeValX = peakValX >> 1;
         edgeValY = peakValY >> 1;
+        x1 = 0;
+        x2 = numPixels - 1;
+        y1 = 0;
+        y2 = numLines/2 - 1;
         
         /* Search in X axis near the peak point */
         for (i = peakPositionX; i >= 0; i--)
@@ -435,7 +441,6 @@ void hist_analysis(int numLines, int numPixels, int * positionX, int * positionY
                 x1 = i;
                 break;
             }
-            x1 = 0;             /* else */
         }
         for (i = peakPositionX; i < numPixels; i++)
         {
@@ -444,7 +449,6 @@ void hist_analysis(int numLines, int numPixels, int * positionX, int * positionY
                 x2 = i;
                 break;
             }
-            x2 = numPixels;     /* else */
         }
         /* Search in Y axis near the peak point */
         for (i = peakPositionY; i >= 0; i--)
@@ -454,16 +458,14 @@ void hist_analysis(int numLines, int numPixels, int * positionX, int * positionY
                 y1 = i;
                 break;
             }
-            y1 = 0;             /* else */
         }
-        for (i = peakPositionY; i < numLines; i++)
+        for (i = peakPositionY; i < numLines/2; i++)
         {
             if (HIST_Y[i] < edgeValY)
             {
                 y2 = i;
                 break;
             }
-            y2 = numLines;     /* else */
         }
         
         /* Recalculate the peak position via this range */
@@ -472,9 +474,9 @@ void hist_analysis(int numLines, int numPixels, int * positionX, int * positionY
         
         /* Return the values via reference */
         *positionX = peakPositionX;
-        *positionY = peakPositionY;
+        *positionY = peakPositionY * 2;
         *rangeX = (x2 - x1) >> 1;
-        *rangeY = (y2 - y1) >> 1;
+        *rangeY = (y2 - y1);
         return;
     }
 }
