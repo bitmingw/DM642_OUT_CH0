@@ -361,6 +361,8 @@ void main()
             /*为运动目标画方框*/
             draw_rectangle(numLines, numPixels, disYbuffer, positionX, positionY, rangeX, rangeY);
             
+            /*当云台运动时画箭头指明运动方向*/
+            draw_arrow(numLines, numPixels, disYbuffer, nextMove);
 		}
 	}
 }
@@ -425,7 +427,8 @@ void do_analysis(void)
     
     /* No object is found, don't change measurement position, but update input value */
     /* Stop movement of the camera */
-    if ((rangeX == 0 || rangeY == 0) && (curMove != HOLDER_MOV_UNDEF)) {
+    if ((rangeX == 0 || rangeY == 0 || rangeX > numPixels || rangeY > numLines) && 
+        (curMove != HOLDER_MOV_UNDEF)) {
         u = curMove * angular_speed;
         nextMove = HOLDER_MOV_STAY;
     }

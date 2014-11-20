@@ -295,6 +295,67 @@ void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int po
 	}
 }
 
+void draw_arrow(int numLines, int numPixels, int dstY, int direction)
+{
+    int i, j;
+    
+    if (direction != LEFT_ARROW && direction != RIGHT_ARROW) {
+        return;
+    }
+    else if (direction == LEFT_ARROW) {
+        /* odd lines, upper part */
+        for (j = 130; j <= 140; j++) {
+            for (i = 290 - 2*j; i <= 30; i++) {
+                *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
+            }
+        }
+        /* even lines, upper part */
+        for (j = 130 + numLines/2; j <= 140 + numLines/2; j++) {
+            for (i = 866 - 2*j; i <= 30; i++) {
+                *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
+            }
+        }
+        /* odd lines, lower part */
+        for (j = 141; j <= 150; j++) {
+            for (i = 2*j - 270; i <= 30; i++) {
+                *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
+            }
+        }
+        /* even lines, lower part */
+        for (j = 141 + numLines/2; j <= 150 + numLines/2; j++) {
+            for (i = 2*j - 846; i <= 30; i++) {
+                *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
+            }
+        }
+    }
+    else {
+        /* odd lines, upper part */
+        for (j = 130; j <= 140; j++) {
+            for (i = 690; i <= 430 + 2*j; i++) {
+                *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
+            }
+        }
+        /* even lines, upper part */
+        for (j = 130 + numLines/2; j <= 140 + numLines/2; j++) {
+            for (i = 690; i <= 2*j - 146; i++) {
+                *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
+            }
+        }
+        /* odd lines, lower part */
+        for (j = 141; j <= 150; j++) {
+            for (i = 690; i <= 990 - 2*j; i++) {
+                *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
+            }
+        }
+        /* even lines, lower part */
+        for (j = 141 + numLines/2; j <= 150 + numLines/2; j++) {
+            for (i = 690; i <= 1466 - 2*j; i++) {
+                *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
+            }
+        }
+    }
+}
+
 void histograms(int numLines, int numPixels, int srcY)
 {
     int i, j;

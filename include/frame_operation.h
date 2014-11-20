@@ -6,6 +6,10 @@
 #ifndef _H_FRAME_OPERATION
 #define _H_FRAME_OPERATION
 
+#define NO_ARROW    0
+#define LEFT_ARROW -1
+#define RIGHT_ARROW 1
+
 /* Copy one frame from src to dst.
  * src and dst are memory addr.
  * EMDA are used to complete the process.
@@ -48,6 +52,12 @@ void merge_diff_frame_gray(int numLines, int numPixels, int diff1Y, int diff1Cb,
  * The width of rectangle is a constant value 1.
  */
 void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int positionY, int rangeX, int rangeY);
+
+/* Draw a white arrow pointing to left or to right on the screen.
+ * The position of arrow is determined by the movement of holder.
+ * i.e. if the holder turn left, the left arrow will be displayed.
+ */
+void draw_arrow(int numLines, int numPixels, int dstY, int direction);
 
 /* Calculate histogram of two axes of image.
  * Update two preallocated arrays to store the values.
