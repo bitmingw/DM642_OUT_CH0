@@ -40,12 +40,6 @@ void merge_diff_frame_gray(int numLines, int numPixels, int diff1Y, int diff1Cb,
     int diff2Y, int diff2Cb, int diff2Cr, int dispY, int dispCb, int dispCr);
 
 
-/* Calculate centroid of white points in the frame.
- * Update two int numbers, the X position (numPixels) and Y position (numLines).
- * Use call by reference to update two values.
- */
-void centroid(int numLines, int numPixels, int srcY, int * positionX, int * positionY);
-
 /* Draw a white rectangle in the current frame.
  * The location of rectangle is determined by the location of moving object, namely positionX and positionY.
  * Make sure positionX and positionY are in the range of screen.
@@ -58,13 +52,13 @@ void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int po
 /* Calculate histogram of two axes of image.
  * Update two preallocated arrays to store the values.
  */
- void histograms(int numLines, int numPixels, int srcY);
- 
+void histograms(int numLines, int numPixels, int srcY);
+
  /* Local the moving object in the screen based on two sided external histogram of the image.
   * Update three numbers: the position and range of the object
   * External threshold is checked to determine if there is no object in the screen.
   * The boundary of object is defined as the half of the peak value.
   */
- void hist_analysis(int numLines, int numPixels, int * positionX, int * positionY, int * rangeX, int * rangeY);
+void hist_analysis(int numLines, int numPixels, int * positionX, int * positionY, int * rangeX, int * rangeY);
 
 #endif /*_H_FRAME_OPERATION*/

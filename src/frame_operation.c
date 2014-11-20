@@ -124,7 +124,6 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
 }
 
 
-
  void send_frame_gray(int numLines, int numPixels, int srcY, int dstY)
 {
     int i;
@@ -201,53 +200,6 @@ void merge_diff_frame_gray(int numLines, int numPixels, int diff1Y, int diff1Cb,
     }
 }
 
-void centroid(int numLines, int numPixels, int srcY, int * positionX, int * positionY)
-{
-    int i, j, count, points, sum;
-    extern Uint8 CACHE_S[720];    /*Iterate for each line*/
-    extern Uint8 CACHE_A[720];    /*Store the count of each line. 588 used.*/
-    extern Uint8 CACHE_B[720];    /*Store the mid white point of x-axis. 588 used.*/
-
-    for (i = 0; i < numLines; i++)
-    {
-        DAT_copy((void *)(srcY + i * numPixels),
-                 CACHE_S, numPixels);
-        /*Count the number of white points in this line.*/
-        count = 0;
-        for (j = 0; j < numPixels; j++)
-        {
-            if (CACHE_S[j] == 0xFF)
-                count++;
-        }
-        CACHE_A[i] = count;
-        /*Find the mid of white points*/
-        points = count / 2;
-        count = 0;
-        for (j = 0; j < numPixels; j++)
-        {
-            if (CACHE_S[j] == 0xFF)
-                count++;
-            if (count == points)
-            {
-                CACHE_B[i] = j;
-                break;
-            }
-        }
-    }
-
-    /* Calculate the position */
-    points = 0;    sum = 0;
-    for (i = 0; i < numLines; i++)
-    {
-        points += CACHE_A[i];
-    }
-    *positionY = points / numLines;
-    for (i = 0; i < numLines; i++)
-    {
-        sum += CACHE_B[i] * CACHE_A[i];
-    }
-    *positionX = sum / points;
-}
 
 void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int positionY, int rangeX, int rangeY)
 {
@@ -255,13 +207,13 @@ void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int po
     int width = 2;
     int x1, x2, y1, y2;
     extern Uint8 CACHE_S[720];
-    
+
     x1 = (positionX - rangeX >= 2) ? (positionX - rangeX) : 2;
     x2 = (positionX + rangeX < numPixels - 2) ? (positionX + rangeX) : numPixels - 2;
     /* Y storage for odd and even are separated */
     y1 = (positionY - rangeY >= 2) ? (positionY - rangeY)/2 + 1 : 2;
     y2 = (positionY + rangeY < numLines - 2) ? (positionY + rangeY)/2 - 1 : (numLines)/2 - 2;
-    
+
     /* Up horizontal */
     /* odd lines */
     for(i = y1 - width; i < y1; i++)
@@ -272,7 +224,7 @@ void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int po
 	    	 CACHE_S[j] = 0xFF;
 	    }
         DAT_copy(CACHE_S, (void *)(dstY + i * numPixels), numPixels);
-	}	
+	}
 	/* even lines */
 	for(i = numLines/2 + y1 - width; i < numLines/2 + y1; i++)
 	{
@@ -288,7 +240,7 @@ void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int po
 	/* odd lines */
     for(i = y2; i < y2 + width; i++)
 	{
-        DAT_copy((void *)(dstY + i * numPixels), CACHE_S, numPixels);	    
+        DAT_copy((void *)(dstY + i * numPixels), CACHE_S, numPixels);
         for(j = x1 - width; j < x2 + width; j++)
 	    {
 	    	 CACHE_S[j] = 0xFF;
@@ -304,8 +256,8 @@ void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int po
 	    	 CACHE_S[j] = 0xFF;
 	    }
         DAT_copy(CACHE_S, (void *)(dstY + i * numPixels), numPixels);
-	}	
-	
+	}
+
 	/* Left vertical */
 	/* odd lines */
     for(i = y1; i < y2; i++)
@@ -323,7 +275,7 @@ void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int po
 	    	 *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
 	    }
 	}
-	
+
 	/* Right vertical */
 	/* odd lines */
     for(i = y1; i < y2; i++)
@@ -340,7 +292,7 @@ void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int po
 	    {
 	    	 *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
 	    }
-	}    
+	}
 }
 
 void histograms(int numLines, int numPixels, int srcY)
@@ -349,7 +301,7 @@ void histograms(int numLines, int numPixels, int srcY)
     extern Uint32 HIST_X[720];    /*Store the histogram on X axis*/
     extern Uint32 HIST_Y[588];    /*Store the histogram on Y axis*/
     extern Uint8 CACHE_S[720];    /*Iterate for each line*/
-    
+
     /* Clear the former histogram info */
     for (i = 0; i < numPixels; i++)
     {
@@ -387,19 +339,19 @@ void hist_analysis(int numLines, int numPixels, int * positionX, int * positionY
     extern Uint32 thresholdX, thresholdY;   /* The external threshold value of histogram to detect a object */
     extern Uint32 HIST_X[720];              /* The histogram on X axis */
     extern Uint32 HIST_Y[588];              /* The histogram on Y axis */
-    
+
     /* Calculate on X axis */
     peakValX = 0;
     peakPositionX = 0;
     for (i = 0; i < 720; i++)
     {
-        if (HIST_X[i] > peakValX) 
+        if (HIST_X[i] > peakValX)
         {
             peakValX = HIST_X[i];
             peakPositionX = i;
         }
     }
-    
+
     /* Calculate on Y axis */
     peakValY = 0;
     peakPositionY = 0;
@@ -411,9 +363,9 @@ void hist_analysis(int numLines, int numPixels, int * positionX, int * positionY
             peakPositionY = i;
         }
     }
-    
+
     /* Check if thresholds are met - there is a moving object */
-    
+
     /* No object detected */
     if (peakValX < thresholdX || peakValY < thresholdY/2)
     {
@@ -432,7 +384,7 @@ void hist_analysis(int numLines, int numPixels, int * positionX, int * positionY
         x2 = numPixels - 1;
         y1 = 0;
         y2 = numLines/2 - 1;
-        
+
         /* Search in X axis near the peak point */
         for (i = peakPositionX; i >= 0; i--)
         {
@@ -467,11 +419,11 @@ void hist_analysis(int numLines, int numPixels, int * positionX, int * positionY
                 break;
             }
         }
-        
+
         /* Recalculate the peak position via this range */
         peakPositionX = (x1 + x2) >> 1;
         peakPositionY = (y1 + y2) >> 1;
-        
+
         /* Return the values via reference */
         *positionX = peakPositionX;
         *positionY = peakPositionY * 2;
