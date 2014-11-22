@@ -302,54 +302,54 @@ void draw_arrow(int numLines, int numPixels, int dstY, int direction)
     if (direction != LEFT_ARROW && direction != RIGHT_ARROW) {
         return;
     }
-    else if (direction == LEFT_ARROW) {
+    if (direction == LEFT_ARROW) {
         /* odd lines, upper part */
-        for (j = 130; j <= 140; j++) {
-            for (i = 290 - 2*j; i <= 30; i++) {
+        for (i = 130; i <= 140; i++) {
+            for (j = 290 - 2*i; j <= 30; j++) {
                 *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
             }
         }
         /* even lines, upper part */
-        for (j = 130 + numLines/2; j <= 140 + numLines/2; j++) {
-            for (i = 866 - 2*j; i <= 30; i++) {
+        for (i = 130 + numLines/2; i <= 140 + numLines/2; i++) {
+            for (j = 866 - 2*i; j <= 30; j++) {
                 *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
             }
         }
         /* odd lines, lower part */
-        for (j = 141; j <= 150; j++) {
-            for (i = 2*j - 270; i <= 30; i++) {
+        for (i = 141; i <= 150; i++) {
+            for (j = 2*i - 270; j <= 30; j++) {
                 *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
             }
         }
         /* even lines, lower part */
-        for (j = 141 + numLines/2; j <= 150 + numLines/2; j++) {
-            for (i = 2*j - 846; i <= 30; i++) {
+        for (i = 141 + numLines/2; i <= 150 + numLines/2; i++) {
+            for (j = 2*i - 846; j <= 30; j++) {
                 *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
             }
         }
     }
-    else {
+    else if (direction == RIGHT_ARROW) {
         /* odd lines, upper part */
-        for (j = 130; j <= 140; j++) {
-            for (i = 690; i <= 430 + 2*j; i++) {
+        for (i = 130; i <= 140; i++) {
+            for (j = 690; j <= 430 + 2*i; j++) {
                 *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
             }
         }
         /* even lines, upper part */
-        for (j = 130 + numLines/2; j <= 140 + numLines/2; j++) {
-            for (i = 690; i <= 2*j - 146; i++) {
+        for (i = 130 + numLines/2; i <= 140 + numLines/2; i++) {
+            for (j = 690; j <= 2*i - 146; j++) {
                 *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
             }
         }
         /* odd lines, lower part */
-        for (j = 141; j <= 150; j++) {
-            for (i = 690; i <= 990 - 2*j; i++) {
+        for (i = 141; i <= 150; i++) {
+            for (j = 690; j <= 990 - 2*i; j++) {
                 *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
             }
         }
         /* even lines, lower part */
-        for (j = 141 + numLines/2; j <= 150 + numLines/2; j++) {
-            for (i = 690; i <= 1466 - 2*j; i++) {
+        for (i = 141 + numLines/2; i <= 150 + numLines/2; i++) {
+            for (j = 690; j <= 1466 - 2*i; j++) {
                 *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
             }
         }
