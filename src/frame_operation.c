@@ -302,32 +302,34 @@ void draw_arrow(int numLines, int numPixels, int dstY, int direction)
     if (direction != LEFT_ARROW && direction != RIGHT_ARROW) {
         return;
     }
+    /* NOTE: left part is truncated, it starts from 30 pix */
     if (direction == LEFT_ARROW) {
         /* odd lines, upper part */
         for (i = 130; i <= 140; i++) {
-            for (j = 290 - 2*i; j <= 30; j++) {
+            for (j = 320 - 2*i; j <= 60; j++) {
                 *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
             }
         }
         /* even lines, upper part */
         for (i = 130 + numLines/2; i <= 140 + numLines/2; i++) {
-            for (j = 866 - 2*i; j <= 30; j++) {
+            for (j = 896 - 2*i; j <= 60; j++) {
                 *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
             }
         }
         /* odd lines, lower part */
         for (i = 141; i <= 150; i++) {
-            for (j = 2*i - 270; j <= 30; j++) {
+            for (j = 2*i - 240; j <= 60; j++) {
                 *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
             }
         }
         /* even lines, lower part */
         for (i = 141 + numLines/2; i <= 150 + numLines/2; i++) {
-            for (j = 2*i - 846; j <= 30; j++) {
+            for (j = 2*i - 816; j <= 60; j++) {
                 *(Uint8 *)(dstY + i*numPixels + j) = 0xFF;
             }
         }
     }
+    /* Right part is normal, ends at 720 pix */
     else if (direction == RIGHT_ARROW) {
         /* odd lines, upper part */
         for (i = 130; i <= 140; i++) {
