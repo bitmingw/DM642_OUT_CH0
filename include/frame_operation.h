@@ -21,6 +21,10 @@ void send_frame(int numLines, int numPixels, int srcY, int srcCb, int srcCr, \
  */
 void send_frame_gray(int numLines, int numPixels, int srcY, int dstY);
 
+/* Gray version of send_frame(), but also fill the Cb and Cr channel.
+ */
+void send_fill_frame_gray(int numLines, int numPixels, int srcY, int dstY, int dstCb, int dstCr);
+
 
 /* Generate a difference frame from Y/Cb/Cr and subY/subCb/subCr.
  * The results are placed in dstY/dstCb/dstCr.

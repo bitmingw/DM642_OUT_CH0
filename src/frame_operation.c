@@ -136,6 +136,28 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
     }
 }
 
+ void send_fill_frame_gray(int numLines, int numPixels, int srcY, int dstY, int dstCb, int dstCr)
+{
+    int i;
+    Uint32 fillVal = 0x80808080;    /*32bit value to cover Cb and Cr channel*/
+
+    for(i=0; i<numLines; i++)
+    {
+        DAT_copy((void *)(srcY + i * numPixels),
+                 (void *)(dstY + i * numPixels),
+                 numPixels);
+    }
+    for (i = 0; i < numLines; i++)
+    {
+        DAT_fill((void *)(dstCb + i * numPixels), numPixels, &fillVal);
+
+    }
+    for (i = 0; i < numLines; i++)
+    {
+        DAT_fill((void *)(dstCr + i * numPixels), numPixels, &fillVal);
+    }
+}
+
 void gen_diff_frame_gray(int numLines, int numPixels, int Y, int subY, int dstY)
 {
     int i, j;
