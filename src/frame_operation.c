@@ -184,7 +184,7 @@ void merge_diff_frame_gray(int numLines, int numPixels, int diff1Y, int diff1Cb,
                  CACHE_B, numPixels);
         for (j = 0; j < numPixels; j++)
         {
-            CACHE_S[j] = (CACHE_A[j] & CACHE_B[j]) ? 0xFF : 0x00;
+            CACHE_S[j] = (CACHE_A[j] | CACHE_B[j]) ? 0xFF : 0x00;
         }
         DAT_copy(CACHE_S,
                  (void *)(dispY + i * numPixels), numPixels);
