@@ -441,8 +441,8 @@ void hist_analysis(int numLines, int numPixels, int * positionX, int * positionY
     /* Find the range of the object */
     else
     {
-        edgeValX = peakValX >> 1;
-        edgeValY = peakValY >> 1;
+        edgeValX = peakValX / 3;
+        edgeValY = peakValY / 3;
         x1 = 0;
         x2 = numPixels - 1;
         y1 = 0;

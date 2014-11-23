@@ -38,8 +38,8 @@ void do_analysis();
 /********************************************************************/
 
 /*运动目标的直方图强度阈值*/
-Uint32 thresholdX = 108;
-Uint32 thresholdY = 81;
+Uint32 thresholdX = 112;
+Uint32 thresholdY = 63;
 
 extern far void vectors();
 extern volatile Uint32 capNewFrame;
