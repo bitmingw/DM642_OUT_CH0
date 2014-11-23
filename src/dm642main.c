@@ -252,22 +252,23 @@ void main()
         gen_diff_frame_gray(numLines, numPixels, YBuf, YSubBuf, YAnsBuf);
     }
 
-    /*拼合帧差图像，并传送至显示区*/
+    /*拼合帧差图像，并传送至计算区或显示区*/
     YBuf = YbufferDiff12;   YAddBuf = YbufferDiff23;
     CbBuf = CbbufferDiff12; CbAddBuf = CbbufferDiff23;
     CrBuf = CrbufferDiff12; CrAddBuf = CrbufferDiff23;
     merge_diff_frame_gray(numLines, numPixels, YBuf, CbBuf, CrBuf, YAddBuf, CbAddBuf, CrAddBuf,
-        disYbuffer, disCbbuffer, disCrbuffer);
+        YbufferPost, disCbbuffer, disCrbuffer);
+    /*将计算区的图像传送至显示区*/
+    send_frame_gray(numLines, numPixels, YbufferPost, disYbuffer);
+    
+    /*----------------------------------------------------------*/
     
     /*采集随机数种子*/
     srand(TIMER_getCount(hTimer));
     /*初始化Kalman滤波器*/
     init_kalman_filter();
     
-    /*
-    histograms(numLines, numPixels, YbufferPost);
-    send_frame_gray(numLines, numPixels, YbufferPost, disYbuffer);
-    */
+    /*----------------------------------------------------------*/
 
 	/*启动显示模块*/
 	bt656_display_start(vpHchannel0);
@@ -351,12 +352,14 @@ void main()
                 gen_diff_frame_gray(numLines, numPixels, YBuf, YSubBuf, YAnsBuf);
             }
 
-            /*拼合帧差图像，并传送至显示区*/
+            /*拼合帧差图像，并传送至计算区或显示区*/
             YBuf = YbufferDiff12;   YAddBuf = YbufferDiff23;
             CbBuf = CbbufferDiff12; CbAddBuf = CbbufferDiff23;
             CrBuf = CrbufferDiff12; CrAddBuf = CrbufferDiff23;
             merge_diff_frame_gray(numLines, numPixels, YBuf, CbBuf, CrBuf, YAddBuf, CbAddBuf, CrAddBuf,
-                disYbuffer, disCbbuffer, disCrbuffer);
+                YbufferPost, disCbbuffer, disCrbuffer);
+            /*将计算区的图像传送至显示区*/
+            send_frame_gray(numLines, numPixels, YbufferPost, disYbuffer);
                 
             /*为运动目标画方框*/
             draw_rectangle(numLines, numPixels, disYbuffer, positionX, positionY, rangeX, rangeY);
@@ -413,7 +416,7 @@ interrupt void MovingCtrl(void)
 
 void do_analysis(void)
 {
-    extern Uint32 disYbuffer;
+    extern Uint32 YbufferPost;
     extern int numPixels, numLines;
     extern int positionX, positionY, rangeX, rangeY;
     
@@ -421,7 +424,7 @@ void do_analysis(void)
     extern Matrix22 P_pre, P_post;
     extern double u, sigma_u, sigma_z;
     
-    histograms(numLines, numPixels, disYbuffer);
+    histograms(numLines, numPixels, YbufferPost);
     
     hist_analysis(numLines, numPixels, &positionX, &positionY, &rangeX, &rangeY);
     
