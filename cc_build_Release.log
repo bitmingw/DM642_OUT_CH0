@@ -6,10 +6,6 @@
 [ctrl_operation.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -q -o3 -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Release" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"CHIP_DM642" -mv6400 -@"../Release.lkf" "ctrl_operation.c"
 
 [dm642main.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -q -o3 -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Release" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"CHIP_DM642" -mv6400 -@"../Release.lkf" "dm642main.c"
-"dm642main.c", line 63: warning: variable "CbSubBuf" was set but never used
-"dm642main.c", line 63: warning: variable "CrSubBuf" was set but never used
-"dm642main.c", line 67: warning: variable "CbAnsBuf" was set but never used
-"dm642main.c", line 67: warning: variable "CrAnsBuf" was set but never used
 
 [frame_operation.c] "C:\CCStudio_v3.3\C6000\cgtools\bin\cl6x" -q -o3 -fr"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/Release" -i"C:/Documents and Settings/Administrator/My Documents/DM642_OUT_CH0/include" -d"CHIP_DM642" -mv6400 -@"../Release.lkf" "frame_operation.c"
 
@@ -29,4 +25,4 @@
 <Linking>
 
 Build Complete,
-  0 Errors, 4 Warnings, 0 Remarks.
+  0 Errors, 0 Warnings, 0 Remarks.

@@ -60,11 +60,11 @@ void main()
 	/* Current Buf addr */
 	Uint32 YBuf, CbBuf, CrBuf;
     /* Buf addr been subtract */
-    Uint32 YSubBuf, CbSubBuf, CrSubBuf;
+    Uint32 YSubBuf;
     /* Buf addr to be add */
     Uint32 YAddBuf, CbAddBuf, CrAddBuf;
     /* Buf addr to store results */
-    Uint32 YAnsBuf, CbAnsBuf, CrAnsBuf;
+    Uint32 YAnsBuf;
 
 /*-------------------------------------------------------*/
 /* perform all initializations                           */
@@ -220,13 +220,13 @@ void main()
 		switch (nextFrame)
 		{
 			case 1:
-				YBuf = Ybuffer1; CbBuf = Cbbuffer1; CrBuf = Crbuffer1;
+				YBuf = Ybuffer1;
 				break;
 			case 2:
-				YBuf = Ybuffer2; CbBuf = Cbbuffer2; CrBuf = Crbuffer2;
+				YBuf = Ybuffer2;
 				break;
 			case 3:
-				YBuf = Ybuffer3; CbBuf = Cbbuffer3; CrBuf = Crbuffer3;
+				YBuf = Ybuffer3;
 				break;
 		}
         send_frame_gray(numLines, numPixels, capYbuffer, YBuf);
@@ -240,13 +240,9 @@ void main()
         {
             case 1:
                 YBuf = Ybuffer2;   YSubBuf = Ybuffer1;   YAnsBuf = YbufferDiff12;
-                CbBuf = Cbbuffer2; CbSubBuf = Cbbuffer1; CbAnsBuf = CbbufferDiff12;
-                CrBuf = Crbuffer2; CrSubBuf = Crbuffer1; CrAnsBuf = CrbufferDiff12;
                 break;
             case 2:
                 YBuf = Ybuffer3;   YSubBuf = Ybuffer2;   YAnsBuf = YbufferDiff23;
-                CbBuf = Cbbuffer3; CbSubBuf = Cbbuffer2; CbAnsBuf = CbbufferDiff23;
-                CrBuf = Crbuffer3; CrSubBuf = Crbuffer2; CrAnsBuf = CrbufferDiff23;
                 break;
         }
         gen_diff_frame_gray(numLines, numPixels, YBuf, YSubBuf, YAnsBuf);
@@ -285,13 +281,13 @@ void main()
             switch (nextFrame)
             {
                 case 1:
-                    YBuf = Ybuffer1; CbBuf = Cbbuffer1; CrBuf = Crbuffer1;
+                    YBuf = Ybuffer1;
                     break;
                 case 2:
-                    YBuf = Ybuffer2; CbBuf = Cbbuffer2; CrBuf = Crbuffer2;
+                    YBuf = Ybuffer2;
                     break;
                 case 3:
-                    YBuf = Ybuffer3; CbBuf = Cbbuffer3; CrBuf = Crbuffer3;
+                    YBuf = Ybuffer3;
                     break;
             }
             send_frame_gray(numLines, numPixels, capYbuffer, YBuf);
@@ -308,44 +304,33 @@ void main()
                 switch (nextDiff)
                 {
                     case 1:
-                        YAnsBuf = YbufferDiff12; CbAnsBuf = CbbufferDiff12; CrAnsBuf = CrbufferDiff12;
+                        YAnsBuf = YbufferDiff12;
                         switch (nextFrame)
                         {
                             case 1:
                                 YBuf = Ybuffer2;   YSubBuf = Ybuffer1;
-                                CbBuf = Cbbuffer2; CbSubBuf = Cbbuffer1;
-                                CrBuf = Crbuffer2; CrSubBuf = Crbuffer1;
                                 break;
                             case 2:
                                 YBuf = Ybuffer3;   YSubBuf = Ybuffer2;
-                                CbBuf = Cbbuffer3; CbSubBuf = Cbbuffer2;
-                                CrBuf = Crbuffer3; CrSubBuf = Crbuffer2;
                                 break;
                             case 3:
                                 YBuf = Ybuffer1;   YSubBuf = Ybuffer3;
-                                CbBuf = Cbbuffer1; CbSubBuf = Cbbuffer3;
-                                CrBuf = Crbuffer1; CrSubBuf = Crbuffer3;
                                 break;
                         }
                         break;
                     case 2:
-                        YAnsBuf = YbufferDiff23; CbAnsBuf = CbbufferDiff23; CrAnsBuf = CrbufferDiff23;
+                        YAnsBuf = YbufferDiff23;
                         switch (nextFrame)
                         {
                             case 1:
                                 YBuf = Ybuffer3;   YSubBuf = Ybuffer2;
-                                CbBuf = Cbbuffer3; CbSubBuf = Cbbuffer2;
-                                CrBuf = Crbuffer3; CrSubBuf = Crbuffer2;
                                 break;
                             case 2:
                                 YBuf = Ybuffer1;   YSubBuf = Ybuffer3;
-                                CbBuf = Cbbuffer1; CbSubBuf = Cbbuffer3;
-                                CrBuf = Crbuffer1; CrSubBuf = Crbuffer3;
                                 break;
                             case 3:
                                 YBuf = Ybuffer2;   YSubBuf = Ybuffer1;
-                                CbBuf = Cbbuffer2; CbSubBuf = Cbbuffer1;
-                                CrBuf = Crbuffer2; CrSubBuf = Crbuffer1;
+                                break;
                         }
                         break;
                 }

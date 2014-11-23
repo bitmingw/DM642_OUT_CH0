@@ -39,14 +39,8 @@ SECTIONS
     .capChaACrSpace >   VIN
 
     .ChaAYSpace1 >      BUF1
-    .ChaACbSpace1 >     BUF1
-    .ChaACrSpace1 >     BUF1
     .ChaAYSpace2 >      BUF2
-    .ChaACbSpace2 >     BUF2
-    .ChaACrSpace2 >     BUF2
     .ChaAYSpace3 >      BUF3
-    .ChaACbSpace3 >     BUF3
-    .ChaACrSpace3 >     BUF3
 
     .ChaAYSpaceDiff12 > DF12
     .ChaACbSpaceDiff12> DF12
@@ -55,8 +49,6 @@ SECTIONS
     .ChaACbSpaceDiff23> DF23
     .ChaACrSpaceDiff23> DF23
     .ChaAYSpacePost   > POST
-    .ChaACbSpacePost  > POST
-    .ChaACrSpacePost  > POST
 
     .disChaAYSpace >    VOUT
     .disChaACbSpace >   VOUT

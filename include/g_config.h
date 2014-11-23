@@ -161,38 +161,17 @@ Uint32 capCrbuffer = 0x8009b0a0;
 /*分配空间，记录第一帧图像首地址*/
 #pragma DATA_SECTION(ChaAYSpace1, ".ChaAYSpace1")
 Uint8 ChaAYSpace1[720*588];
-#pragma DATA_SECTION(ChaACbSpace1, ".ChaACbSpace1")
-Uint8 ChaACbSpace1[360*588];
-#pragma DATA_SECTION(ChaACrSpace1, ".ChaACrSpace1")
-Uint8 ChaACrSpace1[360*588];
-
 Uint32 Ybuffer1  = 0x80100000;
-Uint32 Cbbuffer1 = 0x801675c0;
-Uint32 Crbuffer1 = 0x8019b0a0;
 
 /*分配空间，记录第二帧图像首地址*/
 #pragma DATA_SECTION(ChaAYSpace2, ".ChaAYSpace2")
 Uint8 ChaAYSpace2[720*588];
-#pragma DATA_SECTION(ChaACbSpace2, ".ChaACbSpace2")
-Uint8 ChaACbSpace2[360*588];
-#pragma DATA_SECTION(ChaACrSpace2, ".ChaACrSpace2")
-Uint8 ChaACrSpace2[360*588];
-
 Uint32 Ybuffer2  = 0x80200000;
-Uint32 Cbbuffer2 = 0x802675c0;
-Uint32 Crbuffer2 = 0x8029b0a0;
 
 /*分配空间，记录第三帧图像首地址*/
 #pragma DATA_SECTION(ChaAYSpace3, ".ChaAYSpace3")
 Uint8 ChaAYSpace3[720*588];
-#pragma DATA_SECTION(ChaACbSpace3, ".ChaACbSpace3")
-Uint8 ChaACbSpace3[360*588];
-#pragma DATA_SECTION(ChaACrSpace3, ".ChaACrSpace3")
-Uint8 ChaACrSpace3[360*588];
-
 Uint32 Ybuffer3  = 0x80300000;
-Uint32 Cbbuffer3 = 0x803675c0;
-Uint32 Crbuffer3 = 0x8039b0a0;
 
 /*分配空间，记录第一二帧差图像首地址*/
 #pragma DATA_SECTION(ChaAYSpaceDiff12, ".ChaAYSpaceDiff12")
@@ -221,14 +200,8 @@ Uint32 CrbufferDiff23 = 0x8059b0a0;
 /*分配空间，后处理图像首地址*/
 #pragma DATA_SECTION(ChaAYSpacePost, ".ChaAYSpacePost")
 Uint8 ChaAYSpacePost[720*588];
-#pragma DATA_SECTION(ChaACbSpacePost, ".ChaACbSpacePost")
-Uint8 ChaACbSpacePost[360*588];
-#pragma DATA_SECTION(ChaACrSpacePost, ".ChaACrSpacePost")
-Uint8 ChaACrSpacePost[360*588];
-
 Uint32 YbufferPost  = 0x80600000;
-Uint32 CbbufferPost = 0x806675c0;
-Uint32 CrbufferPost = 0x8069b0a0;
+
 
 /*显示图像首地址，空间已在 vportdis.c 中分配*/
 Uint32 disYbuffer  = 0x81000000;
