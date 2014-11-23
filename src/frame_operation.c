@@ -8,7 +8,7 @@
 #include <csl_dat.h>
 #include "frame_operation.h"
 
- void send_frame(int numLines, int numPixels, int srcY, int srcCb, int srcCr, \
+void send_frame(int numLines, int numPixels, int srcY, int srcCb, int srcCr, \
     int dstY, int dstCb, int dstCr)
 {
     int i;
@@ -133,28 +133,6 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
         DAT_copy((void *)(srcY + i * numPixels),
                  (void *)(dstY + i * numPixels),
                  numPixels);
-    }
-}
-
- void send_fill_frame_gray(int numLines, int numPixels, int srcY, int dstY, int dstCb, int dstCr)
-{
-    int i;
-    Uint32 fillVal = 0x80808080;    /*32bit value to cover Cb and Cr channel*/
-
-    for(i=0; i<numLines; i++)
-    {
-        DAT_copy((void *)(srcY + i * numPixels),
-                 (void *)(dstY + i * numPixels),
-                 numPixels);
-    }
-    for (i = 0; i < numLines; i++)
-    {
-        DAT_fill((void *)(dstCb + i * (numPixels >> 1)), (numPixels >> 1), &fillVal);
-
-    }
-    for (i = 0; i < numLines; i++)
-    {
-        DAT_fill((void *)(dstCr + i * (numPixels >> 1)), (numPixels >> 1), &fillVal);
     }
 }
 
