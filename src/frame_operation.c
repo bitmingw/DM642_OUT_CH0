@@ -149,12 +149,12 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
     }
     for (i = 0; i < numLines; i++)
     {
-        DAT_fill((void *)(dstCb + i * numPixels), numPixels, &fillVal);
+        DAT_fill((void *)(dstCb + i * (numPixels >> 1)), (numPixels >> 1), &fillVal);
 
     }
     for (i = 0; i < numLines; i++)
     {
-        DAT_fill((void *)(dstCr + i * numPixels), numPixels, &fillVal);
+        DAT_fill((void *)(dstCr + i * (numPixels >> 1)), (numPixels >> 1), &fillVal);
     }
 }
 
@@ -213,12 +213,12 @@ void merge_diff_frame_gray(int numLines, int numPixels, int diff1Y, int diff1Cb,
     }
     for (i = 0; i < numLines; i++)
     {
-        DAT_fill((void *)(dispCb + i * numPixels), numPixels, &fillVal);
+        DAT_fill((void *)(dispCb + i * (numPixels >> 1)), (numPixels >> 1), &fillVal);
 
     }
     for (i = 0; i < numLines; i++)
     {
-        DAT_fill((void *)(dispCr + i * numPixels), numPixels, &fillVal);
+        DAT_fill((void *)(dispCr + i * (numPixels >> 1)), (numPixels >> 1), &fillVal);
     }
 }
 
