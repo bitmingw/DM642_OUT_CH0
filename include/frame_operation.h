@@ -1,6 +1,7 @@
 /*****************************************************************************
- * Author: bitmingw
- * Replace some redundant operations in main routine.
+ * Author: Ming Wen
+ * All the operations of frames, such as generate difference frame,
+ * merge frames, and drawing symbols, are implemented here.
  *****************************************************************************/
 
 #ifndef _H_FRAME_OPERATION
@@ -17,11 +18,13 @@
 void send_frame(int numLines, int numPixels, int srcY, int srcCb, int srcCr, \
     int dstY, int dstCb, int dstCr);
 
+
 /* Generate a difference frame from Y/Cb/Cr and subY/subCb/subCr.
  * The results are placed in dstY/dstCb/dstCr.
  */
 void gen_diff_frame(int numLines, int numPixels, int Y, int Cb, int Cr, \
     int subY, int subCb, int subCr, int dstY, int dstCb, int dstCr);
+
 
 /* Generate the display image from two difference frames.
  */
@@ -33,9 +36,11 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
  */
 void send_frame_gray(int numLines, int numPixels, int srcY, int dstY);
 
+
 /* Gray version of gen_diff_frame()
  */
 void gen_diff_frame_gray(int numLines, int numPixels, int Y, int subY, int dstY);
+
 
 /* Gray version of merge_diff_frame()
  */
@@ -52,16 +57,19 @@ void merge_diff_frame_gray(int numLines, int numPixels, int diff1Y, int diff1Cb,
  */
 void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int positionY, int rangeX, int rangeY);
 
+
 /* Draw a white arrow pointing to left or to right on the screen.
  * The position of arrow is determined by the movement of holder.
  * i.e. if the holder turn left, the left arrow will be displayed.
  */
 void draw_arrow(int numLines, int numPixels, int dstY, int direction);
 
+
 /* Calculate histogram of two axes of image.
  * Update two preallocated arrays to store the values.
  */
 void histograms(int numLines, int numPixels, int srcY);
+
 
  /* Local the moving object in the screen based on two sided external histogram of the image.
   * Update three numbers: the position and range of the object

@@ -1,13 +1,8 @@
 /********************************************************************/
 /* Video tracking system via Three-frame difference method          */
+/* and Kalman Filter.                                               */
 /* Author: Ming Wen                                                 */
-/********************************************************************/
-
-/********************************************************************/
-/*  Copyright 2006 by Vision Magic Ltd.								*/
-/*  Restricted rights to use, duplicate or disclose this code are	*/
-/*  granted through contract.									    */
-/*  															    */
+/* Copyright 2014 Visual Surveillance Group, BIT.                   */
 /********************************************************************/
 
 #include <stdlib.h>
@@ -37,7 +32,7 @@ void do_analysis();
 
 /********************************************************************/
 
-/*运动目标的直方图强度阈值*/
+/* 运动目标的直方图强度阈值 */
 Uint32 thresholdX = 112;
 Uint32 thresholdY = 63;
 
@@ -47,7 +42,7 @@ extern volatile Uint32 disNewFrame;
 
 /********************************************************************/
 
-/*此程序可将视频采集口1 CH1(第二个通道)的数据经过Video Port0送出*/
+/* 此程序可将视频采集口1 CH1(第二个通道)的数据经过Video Port0送出 */
 void main()
 {
 	Uint8 addrI2C;
@@ -69,23 +64,22 @@ void main()
 /*-------------------------------------------------------*/
 /* perform all initializations                           */
 /*-------------------------------------------------------*/
-	/*Initialise CSL，初始化CSL库*/
+	/* 初始化CSL库 */
 	CSL_init();
 	CHIP_config(&VMD642percfg);
 /*----------------------------------------------------------*/
-	/*EMIFA的初始化，将CE0设为SDRAM空间，CE1设为异步空间
-	 注，DM642支持的是EMIFA，而非EMIF*/
+	/* EMIFA的初始化，将CE0设为SDRAM空间，CE1设为异步空间
+	 注，DM642支持的是EMIFA，而非EMIF */
 	EMIFA_config(&VMDEMIFConfig);
-    
+
 /*----------------------------------------------------------*/
-    /*TIMER初始化，设置TIMER0*/
+    /* TIMER初始化，设置TIMER0 */
     hTimer = TIMER_open(TIMER_DEV0, 0);
     TimerEventId = TIMER_getEventId(hTimer);
     TIMER_config(hTimer, &timerConfig);
-    
+
 /*----------------------------------------------------------*/
-	/*中断向量表的初始化*/
-	//Point to the IRQ vector table
+	/* 中断向量表的初始化 */
     IRQ_setVecs(vectors);
     IRQ_nmiEnable();
     IRQ_globalEnable();
@@ -96,84 +90,84 @@ void main()
     IRQ_reset(IRQ_EVT_VINT0);
     IRQ_reset(TimerEventId);
     IRQ_enable(TimerEventId);   /* Enable timer interrupt */
-    
-    /*打开一个数据拷贝的数据通路*/
+
+    /* 打开一个数据拷贝的数据通路 */
     DAT_open(DAT_CHAANY, DAT_PRI_LOW, DAT_OPEN_2D);
 
 /*----------------------------------------------------------*/
-/*打开RS485输出信号通路*/
+/* 打开RS485输出信号通路 */
     /* Open UART */
     g_uartHandleA = VMD642_UART_open(VMD642_UARTB,
     									UARTHW_VMD642_BAUD_9600,
     									&g_uartConfig);
-    
+
 /*----------------------------------------------------------*/
-	/*进行IIC的初始化*/
+	/* 进行IIC的初始化 */
 	hVMD642I2C = I2C_open(I2C_PORT0, I2C_OPEN_RESET);
 	I2C_config(hVMD642I2C, &VMD642IIC_Config);
 
 /*----------------------------------------------------------*/
-	/*进行TVP5150pbs的初始化*/
-	/*选择TVP5150，设置视频采集第一通路ch0, 即U12*/
+	/* 进行TVP5150pbs的初始化 */
+	/* 选择TVP5150，设置视频采集第一通路ch0, 即U12 */
 
-	/*将GPIO0不做为GPINT使用*/
+	/* 将GPIO0不做为GPINT使用 */
 	GPIO_RSET(GPGC, 0x0);
 
-	/*将GPIO0做为输出*/
+	/* 将GPIO0做为输出 */
 	GPIO_RSET(GPDIR, 0x1);
 
-	/*GPIO0输出为高，选择IIC0总线*/
+	/* GPIO0输出为高，选择IIC0总线 */
 	GPIO_RSET(GPVAL, 0x0);
 
-	/*选择第二个5150，U12*/
+	/* 选择第二个5150，U12 */
 	addrI2C = 0xBA >> 1;
     _IIC_write(hVMD642I2C, addrI2C, 0x00, input_sel);
     _IIC_write(hVMD642I2C, addrI2C, 0x03, misc_ctrl);
     _IIC_write(hVMD642I2C, addrI2C, 0x0D, output_format);
     _IIC_write(hVMD642I2C, addrI2C, 0x0F, pin_cfg);
     _IIC_write(hVMD642I2C, addrI2C, 0x1B, chro_ctrl_2);
-    /*读取视频格式*/
+    /* 读取视频格式 */
     _IIC_read(hVMD642I2C, addrI2C, 0x8c, &vFromat);
     vFromat = vFromat & 0xff;
 	switch (vFromat)
 	{
 		case TVP51XX_NTSCM:
 		case TVP51XX_NTSC443:
-			NTSCorPAL = 1;/*系统为NTSC的模式*/
+			NTSCorPAL = 1;  /* 系统为NTSC的模式 */
 			break;
 		case TVP51XX_PALBGHIN:
 		case TVP51XX_PALM:
 		case TVP5150_FORCED_PAL:
-			NTSCorPAL = 0;/*系统为PAL的模式*/
+			NTSCorPAL = 0;  /* 系统为PAL的模式 */
 			break;
 		default:
-			NTSCorPAL = 2;/*系统为不支持的模式*/
+			NTSCorPAL = 2;  /* 系统为不支持的模式 */
 			break;
 	}
 	if(NTSCorPAL == 2)
 	{
-		/*系统不支持的模式，重新配置*/
+		/* 系统不支持的模式，中止程序 */
 		for(;;)
 		{}
 	}
 
 /*----------------------------------------------------------*/
-	/*进行SAA7121H的初始化*/
+	/* 进行SAA7121H的初始化 */
 
-	/*GPIO0输出为低，选择IIC0总线，配置图像输出*/
+	/* GPIO0输出为低，选择IIC0总线，配置图像输出 */
 	GPIO_RSET(GPVAL, 0x0);
-	/*选择第一个5150，即U10*/
+	/* 选择第一个5150，即U10 */
 	addrI2C = 0xB8 >> 1;
-	/*将Video Port0的视频输入口的数据口设为高阻状态，
-	  使能SCLK，将第27脚设为输入*/
+	/* 将Video Port0的视频输入口的数据口设为高阻状态，
+	  使能SCLK，将第27脚设为输入 */
 	_IIC_write(hVMD642I2C, addrI2C, 0x03, 0x1);
 
-	/*配置SAA7121H*/
-	/*GPIO0输出为低，选择IIC1总线，配置图像输出*/
+	/* 配置SAA7121H */
+	/* GPIO0输出为低，选择IIC1总线，配置图像输出 */
 	GPIO_RSET(GPVAL, 0x1);
 
-	/*初始化Video Port0*/
-	/*将Video Port0设为encoder输出*/
+	/* 初始化Video Port0 */
+	/* 将Video Port0设为encoder输出 */
 	portNumber = 0;
 	vpHchannel0 = bt656_8bit_ncfd(portNumber);
 
@@ -197,24 +191,24 @@ void main()
 	}
 
 /*----------------------------------------------------------*/
-	/*初始化Video Port1*/
-	/*将Video Port1设为采集输入*/
+	/* 初始化Video Port1 */
+	/* 将Video Port1设为采集输入 */
 	portNumber = 1;
 	vpHchannel1 = bt656_8bit_ncfc(portNumber);
 
 /*----------------------------------------------------------*/
-	/*启动采集模块*/
+	/* 启动采集模块 */
 	bt656_capture_start(vpHchannel1);
-    
-    /*开启定时器*/
+
+    /* 开启定时器 */
     TIMER_start(hTimer);
 
-	/*第一次运行，采集三帧数据*/
+	/* 第一次运行，采集三帧数据 */
 	for (nextFrame = 1; nextFrame <= 3; nextFrame++)
 	{
-		/*等待一帧数据采集完成*/
+		/* 等待一帧数据采集完成 */
 		while(capNewFrame == 0){}
-		/*清除采集完成的标志，开始下一帧采集*/
+		/* 清除采集完成的标志，开始下一帧采集 */
 		capNewFrame = 0;
 
 		switch (nextFrame)
@@ -231,9 +225,9 @@ void main()
 		}
         send_frame_gray(numLines, numPixels, capYbuffer, YBuf);
 	}
-    nextFrame = 1;  /*给出下一帧的位置*/
+    nextFrame = 1;  /* 给出下一帧的位置 */
 
-    /*生成两个帧差图像*/
+    /* 生成两个帧差图像 */
     for (nextDiff = 1; nextDiff <= 2; nextDiff++)
     {
         switch (nextDiff)
@@ -248,36 +242,36 @@ void main()
         gen_diff_frame_gray(numLines, numPixels, YBuf, YSubBuf, YAnsBuf);
     }
 
-    /*拼合帧差图像，并传送至计算区或显示区*/
+    /* 拼合帧差图像，并传送至计算区或显示区 */
     YBuf = YbufferDiff12;   YAddBuf = YbufferDiff23;
     CbBuf = CbbufferDiff12; CbAddBuf = CbbufferDiff23;
     CrBuf = CrbufferDiff12; CrAddBuf = CrbufferDiff23;
     merge_diff_frame_gray(numLines, numPixels, YBuf, CbBuf, CrBuf, YAddBuf, CbAddBuf, CrAddBuf,
         YbufferPost, disCbbuffer, disCrbuffer);
-    /*将计算区的图像传送至显示区*/
+    /* 将计算区的图像传送至显示区 */
     send_frame_gray(numLines, numPixels, YbufferPost, disYbuffer);
-    
-    /*----------------------------------------------------------*/
-    
-    /*采集随机数种子*/
-    srand(TIMER_getCount(hTimer));
-    /*初始化Kalman滤波器*/
-    init_kalman_filter();
-    
+
     /*----------------------------------------------------------*/
 
-	/*启动显示模块*/
+    /* 采集随机数种子 */
+    srand(TIMER_getCount(hTimer));
+    /* 初始化Kalman滤波器 */
+    init_kalman_filter();
+
+    /*----------------------------------------------------------*/
+
+	/* 启动显示模块 */
 	bt656_display_start(vpHchannel0);
-	/*建立实时计算循环*/
+	/* 建立实时计算循环 */
 	for(;;)
 	{
-		/*当采集区的数据已经采集好，而显示缓冲区的数据已空*/
+		/* 当采集区的数据已经采集好，而显示缓冲区的数据已空时 */
 		if((capNewFrame == 1)&&(disNewFrame == 1))
 		{
-			/*清除采集完成的标志，提示可以显示缓冲区图像*/
+			/* 清除采集完成的标志，提示可以显示缓冲区图像 */
 			capNewFrame =0;  disNewFrame =0;
 
-            /*传送一帧图像*/
+            /* 传送一帧图像 */
             switch (nextFrame)
             {
                 case 1:
@@ -292,13 +286,13 @@ void main()
             }
             send_frame_gray(numLines, numPixels, capYbuffer, YBuf);
 
-            /*空间指针更新至下个位置*/
+            /* 空间指针更新至下个位置 */
             if (nextFrame >= 3)
                 nextFrame = 1;
             else
                 nextFrame ++;
 
-            /*计算帧差图像*/
+            /* 计算帧差图像 */
             for (nextDiff = 1; nextDiff <= 2; nextDiff++)
             {
                 switch (nextDiff)
@@ -337,19 +331,19 @@ void main()
                 gen_diff_frame_gray(numLines, numPixels, YBuf, YSubBuf, YAnsBuf);
             }
 
-            /*拼合帧差图像，并传送至计算区或显示区*/
+            /* 拼合帧差图像，并传送至计算区或显示区 */
             YBuf = YbufferDiff12;   YAddBuf = YbufferDiff23;
             CbBuf = CbbufferDiff12; CbAddBuf = CbbufferDiff23;
             CrBuf = CrbufferDiff12; CrAddBuf = CrbufferDiff23;
             merge_diff_frame_gray(numLines, numPixels, YBuf, CbBuf, CrBuf, YAddBuf, CbAddBuf, CrAddBuf,
                 YbufferPost, disCbbuffer, disCrbuffer);
-            /*将计算区的图像传送至显示区*/
+            /* 将计算区的图像传送至显示区 */
             send_frame_gray(numLines, numPixels, YbufferPost, disYbuffer);
-                
-            /*为运动目标画方框*/
+
+            /* 为运动目标画方框 */
             draw_rectangle(numLines, numPixels, disYbuffer, positionX, positionY, rangeX, rangeY);
-            
-            /*当云台运动时画箭头指明运动方向*/
+
+            /* 当云台运动时画箭头指明运动方向 */
             draw_arrow(numLines, numPixels, disYbuffer, nextMove);
 		}
 	}
@@ -360,13 +354,13 @@ interrupt void MovingCtrl(void)
     extern Matrix21 X_post;
     extern Matrix21 z;
     Uint8 i;
-    
+
     /* Calculate pre-configure parameters of filter */
     do_analysis();
-    
+
     /* Iterate the filter process */
     kalman_filter();
-    
+
     /* if no object found, stop the holder if it is running */
     if (nextMove == HOLDER_MOV_STAY && curMove != HOLDER_MOV_STAY) {
         for (i = 0; i < 7; i++) {
@@ -394,7 +388,7 @@ interrupt void MovingCtrl(void)
             VMD642_UART_putChar(g_uartHandleA, turnRight[i]);
         }
     }
-    
+
     /* Finally update moving command */
     curMove = nextMove;
 }
@@ -404,18 +398,18 @@ void do_analysis(void)
     extern Uint32 YbufferPost;
     extern int numPixels, numLines;
     extern int positionX, positionY, rangeX, rangeY;
-    
+
     extern Matrix21 X_pre, X_post, X_measure, B, v;
     extern Matrix22 P_pre, P_post;
     extern double u, sigma_u, sigma_z;
-    
+
     histograms(numLines, numPixels, YbufferPost);
-    
+
     hist_analysis(numLines, numPixels, &positionX, &positionY, &rangeX, &rangeY);
-    
+
     /* No object is found, don't change measurement position, but update input value */
     /* Stop movement of the camera */
-    if ((rangeX == 0 || rangeY == 0 || rangeX > numPixels || rangeY > numLines) && 
+    if ((rangeX == 0 || rangeY == 0 || rangeX > numPixels || rangeY > numLines) &&
         (curMove != HOLDER_MOV_UNDEF)) {
         u = curMove * angular_speed;
         nextMove = HOLDER_MOV_STAY;
@@ -425,9 +419,9 @@ void do_analysis(void)
     else {
         X_measure.array[0][0] = positionX;
         X_measure.array[1][0] = positionY;
-        u = curMove * angular_speed;  /* input value */
+        u = curMove * angular_speed;    /* input value */
         sigma_u = rangeX / numPixels;   /* process error */
-        sigma_z = 0.01;             /* measurement error, estimated as constant */
+        sigma_z = 0.01;                 /* measurement error, estimated as constant */
         nextMove = HOLDER_MOV_UNDEF;
     }
     /* Do iteration for state vector and covariance */

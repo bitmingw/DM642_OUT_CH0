@@ -1,6 +1,8 @@
 /*****************************************************************************
- * Author: bitmingw
- * Kalman filter, system modeling and calculation.
+ * Author: Ming Wen
+ * Kalman filter is implemented here to estimate the states of
+ * moving object.
+ * Calculation of matrix is also implemented to support the filter.
  *****************************************************************************/
 
 #include <stdlib.h>
@@ -10,7 +12,7 @@
 
 /* GLOBAL VARIABLES */
 /*****************************************************************************/
-    
+
 /* Minimal time unit */
 double dt = 0.2;
 
@@ -86,6 +88,7 @@ double sig_rand()
     return ((double)rand() / RAND_MAX - 0.5) * 2;
 }
 
+
 void init_kalman_filter()
 {
     /* variables in filter */
@@ -99,79 +102,80 @@ void init_kalman_filter()
     extern Matrix21 v;
     extern Matrix22 H;
     extern Matrix22 I;
-    
+
     /* variables in main routine */
     extern int numPixels, numLines;
-    
+
     X_post.array[0][0] = numPixels / 2;  /* For later iteration */
     X_post.array[1][0] = numLines / 2;
-    
+
     F.array[0][0] = 1;  F.array[0][1] = 0;
     F.array[1][0] = 0;  F.array[1][1] = 1;
-    
+
     B.array[0][0] = dt; B.array[1][0] = 0;
-    
+
     u = 0;  /* Determined by moving object */
     sigma_u = 0;
     Q = matrix_construct_22(B, B);
     Q = scalar_multiply_22(Q, sigma_u);
-    
+
     P_post.array[0][0] = 1;  P_post.array[0][1] = 0;    /* For later iteration */
     P_post.array[1][0] = 0;  P_post.array[1][1] = 1;
-    
+
     sigma_z = 0;
     v.array[0][0] = dt;     v.array[1][0] = dt;
     R = matrix_construct_22(v, v);
     R = scalar_multiply_22(R, sigma_z);
-    
+
     H.array[0][0] = 1;  H.array[0][1] = 0;
     H.array[1][0] = 0;  H.array[1][1] = 1;
-    
+
     I.array[0][0] = 1;  I.array[0][1] = 0;
     I.array[1][0] = 0;  I.array[1][1] = 1;
 }
+
 
 void kalman_filter()
 {
     /*************************************************************************/
     /* Parameters in Kalman Filter */
-    
+
     /* Prediction Stage */
     /* X_predict = F * X_pre + B * u */ /* Predict the state estimate */
     /* P_predict = F * P_pre * F.transpose + Q */ /* Predict estimate covariance */
-    
+
     /* Update Stage */
     /* y = z - H * X_predict */ /* The measurement residual */
     /* S = H * P_predict * H.transpose + R */ /* The residual covariance */
     /* K = P_predict * H.transpose * S^(-1) */ /* Optimal Kalman Gain */
     /* X_post = X_predict + K * y */ /* Update state estimate */
     /* P_post = (I - K * H) * P_predict */ /* Update estimate covariance */
-    
+
     /* Where */
     /* Q = B * B.transpose * var_of_u */
     /* z = H * X_measure + v */
     /* R = v * v.transpose * var_of_m */
-    
+
     /*************************************************************************/
     /* Prediction Stage */
     /* Minimal time unit */
     extern double dt;
-    
+
     /* The former state vector */
     extern Matrix21 X_pre;
-    
+
     /* The predicted state vector */
     extern Matrix21 X_predict;
-    
+
     /* The state transition matrix F */
     extern Matrix22 F;
 
     /* The control input matrix B, give velocity (not acceleration) */
     extern Matrix21 B;
-    
+
     /* The input value u */
     extern double u;
-    
+
     /* The former estimate covariance */
     extern Matrix22 P_pre;
 
@@ -180,7 +184,7 @@ void kalman_filter()
 
     /* The noise matrix of control input Q */
     extern Matrix22 Q;
-    
+
     /* The predicted covariance */
     extern Matrix22 P_predict;
 
@@ -188,87 +192,87 @@ void kalman_filter()
     /* Measurement */
     /* The output transformation matrix H */
     extern Matrix22 H;
-    
+
     /* The noise ratio of measurement */
-    extern double sigma_z;   
-    
+    extern double sigma_z;
+
     /* The measurement error v */
     extern Matrix21 v;
-    
+
     /* The measurement of state vector */
     extern Matrix21 X_measure;
-    
+
     /* The estimate output z */
     extern Matrix21 z;
-    
+
     /* The noise matrix of measurement R */
     extern Matrix22 R;
-    
+
     /*************************************************************************/
     /* Update Stage */
     /* The measurement residual y */
     extern Matrix21 y;
-    
+
     /* The residual covariance matrix S */
     extern Matrix22 S;
-    
+
     /* The optimal Kalman gain K */
     extern Matrix22 K;
-    
+
     /* The estimate state vector */
     extern Matrix21 X_post;
-    
+
     /* The unit matrix I */
     extern Matrix22 I;
-    
+
     /* The estimate covariance */
     extern Matrix22 P_post;
-    
+
     /*************************************************************************/
     Matrix21 temp21_1;
     Matrix21 temp21_2;
     Matrix22 temp22_1;
     Matrix22 temp22_2;
-    
+
     /* Add noise into process and measurement matrix */
     Q.array[0][0] = sigma_u * sig_rand();
     Q.array[1][1] = sigma_u * sig_rand();
     v.array[0][0] = sigma_z * sig_rand();
     v.array[1][0] = sigma_z * sig_rand();
     R = matrix_construct_22(v, v);
-    
+
     /* Predict Stage */
     temp21_1 = matrix_multiply_21(F, X_pre);
     temp21_2 = scalar_multiply_21(B, u);
     X_predict = matrix_add_21(temp21_1, temp21_2);
-    
+
     temp22_1 = matrix_multiply_22(F, P_pre);
     temp22_2 = matrix_trans_22(F);
     temp22_1 = matrix_multiply_22(temp22_1, temp22_2);
     P_predict = matrix_add_22(temp22_1, Q);
-    
+
     /* Do Measurement */
     temp21_1 = matrix_multiply_21(H, X_measure);
     z = matrix_add_21(temp21_1, v);
-    
+
     /* Update Stage */
     temp21_1 = matrix_multiply_21(H, X_predict);
     temp21_1 = scalar_multiply_21(temp21_1, -1);
     y = matrix_add_21(z, temp21_1);
-    
+
     temp22_1 = matrix_multiply_22(H, P_predict);
     temp22_2 = matrix_trans_22(H);
     temp22_1 = matrix_multiply_22(temp22_1, temp22_2);
     S = matrix_add_22(temp22_1, R);
-    
+
     temp22_1 = matrix_trans_22(H);
     temp22_1 = matrix_multiply_22(P_predict, temp22_1);
     temp22_2 = inverse2(S);
     K = matrix_multiply_22(temp22_1, temp22_2);
-    
+
     temp21_1 = matrix_multiply_21(K, y);
     X_post = matrix_add_21(X_predict, temp21_1);
-    
+
     temp22_1 = matrix_multiply_22(K, H);
     temp22_1 = scalar_multiply_22(temp22_1, -1);
     temp22_1 = matrix_add_22(I, temp22_1);
@@ -293,6 +297,7 @@ Matrix44 matrix_multiply_44(Matrix44 A, Matrix44 B)
     return C;
 }
 
+
 Matrix41 matrix_multiply_41(Matrix44 A, Matrix41 B)
 {
     Matrix41 C;
@@ -310,6 +315,7 @@ Matrix41 matrix_multiply_41(Matrix44 A, Matrix41 B)
     return C;
 }
 
+
 Matrix44 scalar_multiply_44(Matrix44 A, double n)
 {
     int i, j;
@@ -321,6 +327,7 @@ Matrix44 scalar_multiply_44(Matrix44 A, double n)
     return A;
 }
 
+
 Matrix41 scalar_multiply_41(Matrix41 B, double n)
 {
     int i;
@@ -329,6 +336,7 @@ Matrix41 scalar_multiply_41(Matrix41 B, double n)
     }
     return B;
 }
+
 
 Matrix44 matrix_trans_44(Matrix44 A)
 {
@@ -361,6 +369,7 @@ Matrix22 matrix_multiply_22(Matrix22 A, Matrix22 B)
     return C;
 }
 
+
 Matrix21 matrix_multiply_21(Matrix22 A, Matrix21 B)
 {
     Matrix21 C;
@@ -378,6 +387,7 @@ Matrix21 matrix_multiply_21(Matrix22 A, Matrix21 B)
     return C;
 }
 
+
 Matrix22 scalar_multiply_22(Matrix22 A, double n)
 {
     int i, j;
@@ -389,6 +399,7 @@ Matrix22 scalar_multiply_22(Matrix22 A, double n)
     return A;
 }
 
+
 Matrix21 scalar_multiply_21(Matrix21 B, double n)
 {
     int i;
@@ -398,11 +409,12 @@ Matrix21 scalar_multiply_21(Matrix21 B, double n)
     return B;
 }
 
+
 Matrix22 matrix_add_22(Matrix22 A, Matrix22 B)
 {
     Matrix22 sum;
     int i, j;
-    
+
     for (i = 0; i < 2; i++) {
         for (j = 0; j < 2; j++) {
             sum.array[i][j] = A.array[i][j] + B.array[i][j];
@@ -411,16 +423,18 @@ Matrix22 matrix_add_22(Matrix22 A, Matrix22 B)
     return sum;
 }
 
+
 Matrix21 matrix_add_21(Matrix21 A, Matrix21 B)
 {
     Matrix21 sum;
     int i;
-    
+
     for (i = 0; i < 2; i++) {
         sum.array[i][0] = A.array[i][0] + B.array[i][0];
     }
     return sum;
 }
+
 
 Matrix22 matrix_construct_22(Matrix21 A, Matrix21 B)
 {
@@ -431,6 +445,7 @@ Matrix22 matrix_construct_22(Matrix21 A, Matrix21 B)
     C.array[1][1] = A.array[1][0] * B.array[1][0];
     return C;
 }
+
 
 Matrix22 matrix_trans_22(Matrix22 A)
 {
@@ -453,7 +468,7 @@ double determinant(Matrix44 A, int k)
     double det = 0;
     Matrix44 minor;
     int i, j, m, n, c;
-    
+
     /* Base case */
     if (k == 1) {
         return A.array[0][0];
@@ -486,6 +501,7 @@ double determinant(Matrix44 A, int k)
     }
 }
 
+
 Matrix44 adjugate(Matrix44 A, int k)
 {
     Matrix44 B;
@@ -514,20 +530,22 @@ Matrix44 adjugate(Matrix44 A, int k)
             fac.array[q][p] = sign * determinant(B, k-1);
         }
     }
-    
+
     /* Compute the transpose */
     return matrix_trans_44(fac);
 }
+
 
 Matrix44 inverse4(Matrix44 A)
 {
     double det;
     Matrix44 adj;
-    
+
     det = determinant(A, 4);
     adj = adjugate(A, 4);
     return scalar_multiply_44(adj, 1 / det);
 }
+
 
 Matrix22 inverse2(Matrix22 A)
 {

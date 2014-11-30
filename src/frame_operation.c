@@ -1,6 +1,7 @@
 /*****************************************************************************
- * Author: bitmingw
- * Replace some redundant operations in main routine.
+ * Author: Ming Wen
+ * All the operations of frames, such as generate difference frame,
+ * merge frames, and drawing symbols, are implemented here.
  *****************************************************************************/
 
 #include <csl.h>
@@ -28,6 +29,7 @@ void send_frame(int numLines, int numPixels, int srcY, int srcCb, int srcCr, \
                  numPixels>>1);
     }
 }
+
 
 void gen_diff_frame(int numLines, int numPixels, int Y, int Cb, int Cr, \
     int subY, int subCb, int subCr, int dstY, int dstCb, int dstCr)
@@ -75,6 +77,7 @@ void gen_diff_frame(int numLines, int numPixels, int Y, int Cb, int Cr, \
         }
     }
 }
+
 
 void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int diff1Cr, \
     int diff2Y, int diff2Cb, int diff2Cr, int dispY, int dispCb, int dispCr)
@@ -136,6 +139,7 @@ void merge_diff_frame(int numLines, int numPixels, int diff1Y, int diff1Cb, int 
     }
 }
 
+
 void gen_diff_frame_gray(int numLines, int numPixels, int Y, int subY, int dstY)
 {
     int i, j;
@@ -163,6 +167,7 @@ void gen_diff_frame_gray(int numLines, int numPixels, int Y, int subY, int dstY)
                  (void *)(dstY + i * numPixels), numPixels);
     }
 }
+
 
 void merge_diff_frame_gray(int numLines, int numPixels, int diff1Y, int diff1Cb, int diff1Cr, \
     int diff2Y, int diff2Cb, int diff2Cr, int dispY, int dispCb, int dispCr)
@@ -295,10 +300,11 @@ void draw_rectangle(int numLines, int numPixels, int dstY, int positionX, int po
 	}
 }
 
+
 void draw_arrow(int numLines, int numPixels, int dstY, int direction)
 {
     int i, j;
-    
+
     if (direction != LEFT_ARROW && direction != RIGHT_ARROW) {
         return;
     }
@@ -358,6 +364,7 @@ void draw_arrow(int numLines, int numPixels, int dstY, int direction)
     }
 }
 
+
 void histograms(int numLines, int numPixels, int srcY)
 {
     int i, j;
@@ -391,6 +398,7 @@ void histograms(int numLines, int numPixels, int srcY)
         }
     }
 }
+
 
 void hist_analysis(int numLines, int numPixels, int * positionX, int * positionY, int * rangeX, int * rangeY)
 {

@@ -1,5 +1,5 @@
 *
-* Copyright (C) 2006 VisionMagic Ltd.
+* Copyright (C) 2014 Ming Wen.
 * All Rights Reserved
 *
 *
